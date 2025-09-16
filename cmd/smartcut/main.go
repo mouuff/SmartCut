@@ -42,6 +42,15 @@ func (cmd *SmartCutCmd) Run() error {
 		return errors.New("-config parameter required")
 	}
 
+	a := app.New()
+	w := a.NewWindow("SmartCuts")
+
+	listApp := view.NewListApp(w)
+
+	w.SetContent(listApp.Layout())
+	w.Resize(fyne.NewSize(500, 400))
+	w.ShowAndRun()
+
 	// Init returns an error if the package is not ready for use.
 	err := clipboard.Init()
 	if err != nil {
@@ -72,16 +81,6 @@ func printConfigurationTemplate() {
 }
 
 func main() {
-
-	a := app.New()
-	w := a.NewWindow("Fyne List Example")
-
-	listApp := view.NewListApp(w)
-
-	w.SetContent(listApp.Layout())
-	w.Resize(fyne.NewSize(400, 300))
-	w.ShowAndRun()
-
 	cmd := &SmartCutCmd{}
 	err := cmd.Init(os.Args[1:])
 	if err != nil {
