@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mouuff/GoSubAI/pkg/brain"
+	"github.com/mouuff/SmartCuts/pkg/brain"
 )
 
 func TestOllamaBrainGenerateString(t *testing.T) {
