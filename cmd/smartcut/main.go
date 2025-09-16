@@ -1,56 +1,21 @@
 package main
 
 import (
-	"fmt"
-	"strings"
+	"context"
 
-	"github.com/go-vgo/robotgo"
+	"golang.design/x/clipboard"
 )
 
 func main() {
-	fmt.Println("Text replacer app started. Press Ctrl+Shift+X to grab selected text, print it, and replace it with uppercase version.")
-	fmt.Println("Press Ctrl+Shift+Q to quit.")
+	// Init returns an error if the package is not ready for use.
+	err := clipboard.Init()
+	if err != nil {
+		panic(err)
+	}
 
-	// Register hotkeys
-	quitHotkey := []string{"ctrl", "shift", "q"}
-	replaceHotkey := []string{"ctrl", "shift", "x"}
-
-	// Run hotkey listener in goroutine
-	go func() {
-		for {
-			if robotgo.AddEvent(quitHotkey...) {
-				fmt.Println("Quitting...")
-				return
-			}
-
-			if robotgo.AddEvent(replaceHotkey...) {
-				// Simulate Ctrl+C to copy selected text
-				robotgo.KeyTap("c", "ctrl")
-
-				// Read from clipboard
-				text, err := robotgo.ReadAll()
-				if err != nil {
-					fmt.Println("Error reading clipboard:", err)
-					continue
-				}
-
-				if text == "" {
-					fmt.Println("No text selected.")
-					continue
-				}
-
-				fmt.Println("Selected text:", text)
-
-				// Replace with uppercase
-				newText := strings.ToUpper(text)
-				fmt.Println("Replacing with:", newText)
-
-				// Type the new text
-				robotgo.TypeStr(newText)
-			}
-		}
-	}()
-
-	// Keep program alive
-	select {}
+	ch := clipboard.Watch(context.TODO(), clipboard.FmtText)
+	for data := range ch {
+		// print out clipboard data whenever it is changed
+		println(string(data))
+	}
 }
