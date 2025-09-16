@@ -9,6 +9,9 @@ import (
 	"log"
 	"os"
 
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/app"
+	"github.com/mouuff/SmartCuts/pkg/view"
 	"golang.design/x/clipboard"
 )
 
@@ -69,6 +72,15 @@ func printConfigurationTemplate() {
 }
 
 func main() {
+
+	a := app.New()
+	w := a.NewWindow("Fyne List Example")
+
+	listApp := view.NewListApp(w)
+
+	w.SetContent(listApp.Layout())
+	w.Resize(fyne.NewSize(400, 300))
+	w.ShowAndRun()
 
 	cmd := &SmartCutCmd{}
 	err := cmd.Init(os.Args[1:])
