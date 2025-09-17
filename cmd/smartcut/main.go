@@ -14,12 +14,9 @@ import (
 	smartcutapp "github.com/mouuff/SmartCuts/pkg/app"
 	"github.com/mouuff/SmartCuts/pkg/brain"
 	"github.com/mouuff/SmartCuts/pkg/orchestrator"
+	"github.com/mouuff/SmartCuts/pkg/types"
+	"github.com/mouuff/SmartCuts/pkg/utils"
 )
-
-type SmartCutConfig struct {
-	Model string
-	Debug bool
-}
 
 type SmartCutCmd struct {
 	flagSet *flag.FlagSet
@@ -43,6 +40,12 @@ func (cmd *SmartCutCmd) Run() error {
 		return errors.New("-config parameter required")
 	}
 
+	var config types.SmartCutConfig
+	err := utils.ReadFromJson(cmd.config, &config)
+	if err != nil {
+		return err
+	}
+
 	b, err := brain.NewOllamaBrain("llama3.2")
 
 	if err != nil {
@@ -50,6 +53,7 @@ func (cmd *SmartCutCmd) Run() error {
 	}
 
 	o := orchestrator.NewOrchestrator(context.Background(), b)
+
 	go o.Start()
 	go o.StartFeedFromClipboard()
 
@@ -66,9 +70,15 @@ func (cmd *SmartCutCmd) Run() error {
 }
 
 func printConfigurationTemplate() {
-	configTemplate := &SmartCutConfig{
+	configTemplate := &types.SmartCutConfig{
 		Model: "mistral",
-		Debug: false,
+		Hooks: []*types.SmartCutHook{
+			&types.SmartCutHook{
+				Title:          "Translate to French",
+				PropertyName:   "translated_text",
+				PromptTemplate: "Translate this to french: '{{input}}'",
+			},
+		},
 	}
 
 	jsonData, err := json.MarshalIndent(configTemplate, "", "  ")

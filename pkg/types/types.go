@@ -1,8 +1,13 @@
 package types
 
 type SmartCutHook struct {
-	Model        string
-	Name         string
-	Prompt       string
-	PropertyName string
+	Index          int
+	Title          string
+	PromptTemplate string
+	PropertyName   string
+}
+
+type SmartCutConfig struct {
+	Model string
+	Hooks []*SmartCutHook
 }

@@ -1,0 +1,17 @@
+{
+  "Model": "mistral",
+  "Hooks": [
+    {
+      "Index": 0,
+      "Title": "Translate to French",
+      "PromptTemplate": "Translate this to french: '{{input}}'",
+      "PropertyName": "translated_text"
+    },
+    {
+      "Index": 1,
+      "Title": "Rewrite for clarity",
+      "PromptTemplate": "Rewrite this: '{{input}}'",
+      "PropertyName": "result"
+    }
+  ]
+}
