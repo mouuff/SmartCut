@@ -61,6 +61,7 @@ func (sc *SmartCutApp) RefreshList() {
 			// Reset text if user tries to type
 			content.SetText(item.Content)
 		}
+		content.SetMinRowsVisible(sc.Config.MinRowsVisible)
 
 		// Let content expand horizontally
 		contentContainer := container.NewStack(content)

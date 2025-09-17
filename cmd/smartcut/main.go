@@ -70,7 +70,7 @@ func (cmd *SmartCutCmd) Run() error {
 	}()
 
 	w.SetContent(smartcut.Layout())
-	w.Resize(fyne.NewSize(500, 400))
+	w.Resize(fyne.NewSize(800, 400))
 	w.ShowAndRun()
 
 	return nil
@@ -78,7 +78,8 @@ func (cmd *SmartCutCmd) Run() error {
 
 func printConfigurationTemplate() {
 	configTemplate := &types.SmartCutConfig{
-		Model: "mistral",
+		Model:          "mistral",
+		MinRowsVisible: 7,
 		PromptConfigs: []*types.PromptConfig{
 			&types.PromptConfig{
 				Title:          "Translate to French",

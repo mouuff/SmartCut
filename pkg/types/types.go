@@ -8,6 +8,7 @@ type PromptConfig struct {
 }
 
 type SmartCutConfig struct {
-	Model         string
-	PromptConfigs []*PromptConfig
+	Model          string
+	MinRowsVisible int
+	PromptConfigs  []*PromptConfig
 }

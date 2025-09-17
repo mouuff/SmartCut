@@ -1,5 +1,6 @@
 {
   "Model": "mistral",
+  "MinRowsVisible": 7,
   "PromptConfigs": [
     {
       "Index": 0,
