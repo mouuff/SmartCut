@@ -2,12 +2,14 @@ package app
 
 import (
 	"fmt"
+	"strings"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 	"github.com/mouuff/SmartCuts/pkg/types"
+	"github.com/mouuff/SmartCuts/pkg/utils"
 	"golang.design/x/clipboard"
 )
 
@@ -114,11 +116,22 @@ func (sc *SmartCutApp) Layout() fyne.CanvasObject {
 		sc.rg.ReGenerate()
 	})
 
+	helpmsg := `Shortcut for processing the current clipboard: Alt+Shift+G
+	Configuration file: {{configpath}}`
+
+	configpath, err := utils.GetConfigurationFilePath()
+
+	if err != nil {
+		panic(err)
+	}
+
+	helpmsg = strings.ReplaceAll(helpmsg, "{{configpath}}", configpath)
+
 	// Menu bar with Help
 	menu := fyne.NewMainMenu(
 		fyne.NewMenu("Help",
 			fyne.NewMenuItem("About", func() {
-				dialog.ShowInformation("About SmartCut", "SmartCut Example App\n\n- Dispscys a list of items\n- Each item has title, content, and a button\n- Content is Unicode-ready and selectable\n- Add new items dynamically", sc.window)
+				dialog.ShowInformation("About SmartCut", helpmsg, sc.window)
 			}),
 		),
 	)
