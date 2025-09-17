@@ -8,6 +8,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 	"github.com/mouuff/SmartCuts/pkg/orchestrator"
 	"github.com/mouuff/SmartCuts/pkg/types"
+	"golang.design/x/clipboard"
 )
 
 type Item struct {
@@ -46,25 +47,40 @@ func NewSmartCutApp(w fyne.Window, config *types.SmartCutConfig) *SmartCutApp {
 	return la
 }
 
-// RefreshList refreshes the UI with current items
-func (la *SmartCutApp) RefreshList() {
-	la.listContainer.Objects = nil
-	for _, item := range la.items {
-		title := widget.NewLabel(item.Title)
-		content := widget.NewLabel(item.Content)
+func (sc *SmartCutApp) RefreshList() {
+	sc.listContainer.Objects = nil
+	for _, item := range sc.items {
+		title := widget.NewLabelWithStyle(item.Title, fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
+
+		// Multiline selectable Entry, but locked to read-only
+		content := widget.NewEntry()
+		content.SetText(item.Content)
+		content.MultiLine = true
+		content.Wrapping = fyne.TextWrapWord
+		content.OnChanged = func(_ string) {
+			// Reset text if user tries to type
+			content.SetText(item.Content)
+		}
+
+		// Let content expand horizontally
+		contentContainer := container.NewStack(content)
+
 		button := widget.NewButton("Copy", func(c string) func() {
 			return func() {
+				clipboard.Write(clipboard.FmtText, []byte(c))
 				fmt.Println(c)
 			}
 		}(item.Content))
 
-		row := container.NewBorder(nil, nil,
-			container.NewVBox(title, content),
-			button,
+		// Row = title on top, content + button side by side
+		row := container.NewVBox(
+			title,
+			container.NewBorder(nil, nil, nil, button, contentContainer),
 		)
-		la.listContainer.Add(row)
+
+		sc.listContainer.Add(row)
 	}
-	la.listContainer.Refresh()
+	sc.listContainer.Refresh()
 }
 
 // AddItem appends a new item and refreshes the view
