@@ -33,4 +33,5 @@ type Brain interface {
 
 type ResultsGenerator interface {
 	GetChannel() chan GenerationResult
+	ReGenerate()
 }

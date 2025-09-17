@@ -105,7 +105,7 @@ func (la *SmartCutApp) UpdateItem(result types.GenerationResult) {
 // Layout builds the full UI
 func (la *SmartCutApp) Layout() fyne.CanvasObject {
 	addBtn := widget.NewButton("ReGenerate", func() {
-		// TODO: trigger regeneration
+		la.rg.ReGenerate()
 	})
 
 	return container.NewBorder(nil, addBtn, nil, nil, la.listContainer)

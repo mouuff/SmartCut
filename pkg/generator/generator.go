@@ -10,10 +10,11 @@ import (
 )
 
 type ClipboardGenerator struct {
-	ch      chan types.GenerationResult
-	Context context.Context
-	Brain   types.Brain
-	Config  *types.SmartCutConfig
+	currentClipboard string
+	ch               chan types.GenerationResult
+	Context          context.Context
+	Brain            types.Brain
+	Config           *types.SmartCutConfig
 }
 
 func NewClipboardGenerator(context context.Context, brain types.Brain, config *types.SmartCutConfig) *ClipboardGenerator {
@@ -46,7 +47,17 @@ func (o *ClipboardGenerator) GetChannel() chan types.GenerationResult {
 	return o.ch
 }
 
+func (o *ClipboardGenerator) ReGenerate() {
+	o.generateForString(o.currentClipboard)
+}
+
 func (o *ClipboardGenerator) generateForString(data string) {
+	o.currentClipboard = data
+
+	if o.Config.Debug {
+		log.Println("Clipboard changed:", data)
+	}
+
 	// For each prompt config, generate the result
 	for _, promptConfig := range o.Config.PromptConfigs {
 		go o.generateForPromptConfig(data, promptConfig)
