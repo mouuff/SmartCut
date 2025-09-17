@@ -12,7 +12,8 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	smartcutapp "github.com/mouuff/SmartCuts/pkg/app"
-	"golang.design/x/clipboard"
+	"github.com/mouuff/SmartCuts/pkg/brain"
+	"github.com/mouuff/SmartCuts/pkg/orchestrator"
 )
 
 type SmartCutConfig struct {
@@ -42,6 +43,16 @@ func (cmd *SmartCutCmd) Run() error {
 		return errors.New("-config parameter required")
 	}
 
+	b, err := brain.NewOllamaBrain("llama3.2")
+
+	if err != nil {
+		panic(err)
+	}
+
+	o := orchestrator.NewOrchestrator(context.Background(), b)
+	go o.Start()
+	go o.StartFeedFromClipboard()
+
 	a := app.New()
 	w := a.NewWindow("SmartCuts")
 
@@ -50,18 +61,6 @@ func (cmd *SmartCutCmd) Run() error {
 	w.SetContent(smartcutapp.Layout())
 	w.Resize(fyne.NewSize(500, 400))
 	w.ShowAndRun()
-
-	// Init returns an error if the package is not ready for use.
-	err := clipboard.Init()
-	if err != nil {
-		panic(err)
-	}
-
-	ch := clipboard.Watch(context.TODO(), clipboard.FmtText)
-	for data := range ch {
-		// print out clipboard data whenever it is changed
-		println(string(data))
-	}
 
 	return nil
 }

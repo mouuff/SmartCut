@@ -27,36 +27,37 @@ type Orchestrator struct {
 	Out     chan GenerationResult
 }
 
-func NewOrchestrator() *Orchestrator {
+func NewOrchestrator(context context.Context, brain Brain) *Orchestrator {
 	return &Orchestrator{
-		In:  make(chan GenerationRequest),
-		Out: make(chan GenerationResult),
+		Context: context,
+		Brain:   brain,
+		In:      make(chan GenerationRequest),
+		Out:     make(chan GenerationResult),
 	}
 }
 
 func (o *Orchestrator) Start() {
-	go func() {
-		for req := range o.In {
-			// Process the request (placeholder logic)
-			result, err := o.Brain.GenerateString(o.Context, req.PropertyName, req.Prompt)
+	for req := range o.In {
+		// Process the request (placeholder logic)
+		result, err := o.Brain.GenerateString(o.Context, req.PropertyName, req.Prompt)
 
-			if err != nil {
-				log.Println("Error generating:", err)
-				continue
-			} else {
-				o.Out <- GenerationResult{
-					Text: result,
-				}
+		if err != nil {
+			log.Println("Error generating:", err)
+			continue
+		} else {
+			log.Println("Generated:", result)
+			o.Out <- GenerationResult{
+				Text: result,
 			}
 		}
-	}()
+	}
 }
 
-func (o *Orchestrator) StartFeedFromClipboard() error {
+func (o *Orchestrator) StartFeedFromClipboard() {
 	// Init returns an error if the package is not ready for use.
 	err := clipboard.Init()
 	if err != nil {
-		return err
+		panic(err)
 	}
 
 	ch := clipboard.Watch(context.TODO(), clipboard.FmtText)
@@ -72,5 +73,4 @@ func (o *Orchestrator) StartFeedFromClipboard() error {
 
 	log.Println("Stopped feeding from clipboard.")
 
-	return nil
 }
