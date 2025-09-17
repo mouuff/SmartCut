@@ -69,8 +69,6 @@ func (la *SmartCutApp) RefreshList() {
 
 // AddItem appends a new item and refreshes the view
 func (la *SmartCutApp) UpdateItem(result orchestrator.GenerationResult) {
-
-	fmt.Println("Updating item:", result.PromptConfig.Index, result.PromptConfig.Title, result.Text)
 	la.items[result.PromptConfig.Index].Content = result.Text
 	la.RefreshList()
 }
