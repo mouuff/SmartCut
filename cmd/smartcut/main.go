@@ -52,7 +52,7 @@ func (cmd *SmartCutCmd) Run() error {
 		panic(err)
 	}
 
-	o := orchestrator.NewOrchestrator(context.Background(), b)
+	o := orchestrator.NewOrchestrator(context.Background(), b, &config)
 
 	go o.Start()
 	go o.StartFeedFromClipboard()

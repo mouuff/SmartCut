@@ -3,6 +3,7 @@ package orchestrator
 import (
 	"context"
 	"log"
+	"strings"
 
 	"github.com/mouuff/SmartCuts/pkg/types"
 	"golang.design/x/clipboard"
@@ -67,13 +68,25 @@ func (o *Orchestrator) StartFeedFromClipboard() {
 	for data := range ch {
 		// print out clipboard data whenever it is changed
 		println(string(data))
-
-		o.In <- GenerationRequest{
-			Prompt:       string(data),
-			PropertyName: "result",
-		}
+		o.GenerateForString(string(data))
 	}
 
 	log.Println("Stopped feeding from clipboard.")
+}
 
+func (o *Orchestrator) GenerateForString(clipboardText string) {
+	for _, hook := range o.Config.Hooks {
+		prompt := strings.ReplaceAll(hook.PromptTemplate, "{{input}}", clipboardText)
+		result, err := o.Brain.GenerateString(o.Context, hook.PropertyName, prompt)
+
+		if err != nil {
+			log.Println("Error generating:", err)
+			continue
+		} else {
+			log.Println("Generated:", result)
+			o.Out <- GenerationResult{
+				Text: result,
+			}
+		}
+	}
 }
