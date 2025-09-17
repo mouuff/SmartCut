@@ -5,6 +5,7 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 	"github.com/mouuff/SmartCuts/pkg/types"
 	"golang.design/x/clipboard"
@@ -37,7 +38,7 @@ func NewSmartCutApp(
 		})
 	}
 
-	la := &SmartCutApp{
+	sc := &SmartCutApp{
 		items:         items,
 		listContainer: container.NewVBox(),
 		window:        w,
@@ -46,9 +47,9 @@ func NewSmartCutApp(
 	}
 
 	// Render initial list
-	la.RefreshList()
+	sc.RefreshList()
 
-	return la
+	return sc
 }
 
 func (sc *SmartCutApp) Start() {
@@ -99,20 +100,30 @@ func (sc *SmartCutApp) RefreshList() {
 }
 
 // AddItem appends a new item and refreshes the view
-func (la *SmartCutApp) UpdateItem(result types.GenerationResult) {
-	la.items[result.PromptConfig.Index].Content = result.Text
-	la.RefreshList()
+func (sc *SmartCutApp) UpdateItem(result types.GenerationResult) {
+	sc.items[result.PromptConfig.Index].Content = result.Text
+	sc.RefreshList()
 
 	if result.IsExplicit {
-		la.window.RequestFocus()
+		sc.window.RequestFocus()
 	}
 }
 
-// Layout builds the full UI
-func (la *SmartCutApp) Layout() fyne.CanvasObject {
+func (sc *SmartCutApp) Layout() fyne.CanvasObject {
 	addBtn := widget.NewButton("ReGenerate", func() {
-		la.rg.ReGenerate()
+		sc.rg.ReGenerate()
 	})
 
-	return container.NewBorder(nil, addBtn, nil, nil, la.listContainer)
+	// Menu bar with Help
+	menu := fyne.NewMainMenu(
+		fyne.NewMenu("Help",
+			fyne.NewMenuItem("About", func() {
+				dialog.ShowInformation("About SmartCut", "SmartCut Example App\n\n- Dispscys a list of items\n- Each item has title, content, and a button\n- Content is Unicode-ready and selectable\n- Add new items dynamically", sc.window)
+			}),
+		),
+	)
+
+	sc.window.SetMainMenu(menu)
+
+	return container.NewBorder(nil, addBtn, nil, nil, sc.listContainer)
 }
