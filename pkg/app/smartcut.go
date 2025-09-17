@@ -112,8 +112,15 @@ func (sc *SmartCutApp) UpdateItem(result types.GenerationResult) {
 }
 
 func (sc *SmartCutApp) Layout() fyne.CanvasObject {
-	addBtn := widget.NewButton("ReGenerate", func() {
-		sc.rg.ReGenerate()
+	addBtn := widget.NewButton("Generate from clipboard", func() {
+		rawclip := clipboard.Read(clipboard.FmtText)
+
+		if rawclip != nil {
+			sc.rg.GenerateForInput(types.InputResult{
+				Text:       string(rawclip),
+				IsExplicit: true,
+			})
+		}
 	})
 
 	helpmsg := `Shortcut for processing the current clipboard: Alt+Shift+G

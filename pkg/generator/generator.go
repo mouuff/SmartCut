@@ -9,7 +9,6 @@ import (
 )
 
 type ResultsGeneratorImpl struct {
-	lastInput   types.InputResult
 	inputReader types.InputReader
 	ch          chan types.GenerationResult
 	context     context.Context
@@ -35,7 +34,7 @@ func (o *ResultsGeneratorImpl) Start() {
 	go func() {
 		// Listen to clipboard changes
 		for data := range o.inputReader.GetChannel() {
-			o.generateForInput(data)
+			o.GenerateForInput(data)
 		}
 
 		panic("unreachable")
@@ -46,13 +45,7 @@ func (o *ResultsGeneratorImpl) GetChannel() chan types.GenerationResult {
 	return o.ch
 }
 
-func (o *ResultsGeneratorImpl) ReGenerate() {
-	o.generateForInput(o.lastInput)
-}
-
-func (o *ResultsGeneratorImpl) generateForInput(input types.InputResult) {
-	o.lastInput = input
-
+func (o *ResultsGeneratorImpl) GenerateForInput(input types.InputResult) {
 	if o.Config.Debug {
 		log.Println("Clipboard changed:", input.Text)
 	}
