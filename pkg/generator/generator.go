@@ -43,29 +43,37 @@ func (o *ClipboardGenerator) Start() {
 	}
 
 	ch := clipboard.Watch(context.TODO(), clipboard.FmtText)
+
+	// Listen to clipboard changes
 	for data := range ch {
-		// print out clipboard data whenever it is changed
-		println(string(data))
-		o.GenerateForString(string(data))
+
+		// For each prompt config, generate the result
+		for _, promptConfig := range o.Config.PromptConfigs {
+			go o.GenerateForPromptConfig(string(data), promptConfig)
+		}
 	}
 
-	log.Println("Stopped feeding from clipboard.")
+	panic("unreachable")
 }
 
-func (o *ClipboardGenerator) GenerateForString(clipboardText string) {
-	for _, promptConfig := range o.Config.PromptConfigs {
-		prompt := strings.ReplaceAll(promptConfig.PromptTemplate, "{{input}}", clipboardText)
-		result, err := o.Brain.GenerateString(o.Context, promptConfig.PropertyName, prompt)
+func (o *ClipboardGenerator) GenerateForPromptConfig(clipboardText string, promptConfig *types.PromptConfig) {
+	prompt := strings.ReplaceAll(promptConfig.PromptTemplate, "{{input}}", clipboardText)
+	result, err := o.Brain.GenerateString(o.Context, promptConfig.PropertyName, prompt)
 
+	if o.Config.Debug {
 		if err != nil {
 			log.Println("Error generating:", err)
-			continue
 		} else {
-			log.Println("Generated:", result)
-			o.Out <- GenerationResult{
-				Text:         result,
-				PromptConfig: promptConfig,
-			}
+			log.Println("Generated: ", result)
 		}
+	}
+
+	if err != nil {
+		result = "Error while generating: " + err.Error()
+	}
+
+	o.Out <- GenerationResult{
+		Text:         result,
+		PromptConfig: promptConfig,
 	}
 }
