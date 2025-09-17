@@ -3,8 +3,10 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log"
 	"os"
+	"runtime"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -13,8 +15,12 @@ import (
 	"github.com/mouuff/SmartCuts/pkg/generator"
 	"github.com/mouuff/SmartCuts/pkg/inputreader"
 	"github.com/mouuff/SmartCuts/pkg/utils"
+	"github.com/mouuff/go-rocket-update/pkg/provider"
+	"github.com/mouuff/go-rocket-update/pkg/updater"
 	"golang.design/x/clipboard"
 )
+
+const SmartCutVersion string = "v0.0.1"
 
 type SmartCutCmd struct {
 	flagSet *flag.FlagSet
@@ -54,7 +60,7 @@ func (cmd *SmartCutCmd) Run() error {
 	rg.Start()
 
 	a := app.New()
-	w := a.NewWindow("SmartCuts")
+	w := a.NewWindow("SmartCuts - " + SmartCutVersion)
 
 	smartcut := smartcutapp.NewSmartCutApp(w, config, rg)
 	smartcut.Start()
@@ -62,6 +68,20 @@ func (cmd *SmartCutCmd) Run() error {
 	w.SetContent(smartcut.Layout())
 	w.Resize(fyne.NewSize(800, 400))
 	w.ShowAndRun()
+
+	u := &updater.Updater{
+		Provider: &provider.Github{
+			RepositoryURL: "github.com/mouuff/SmartCuts",
+			ArchiveName:   fmt.Sprintf("binaries_%s.zip", runtime.GOOS),
+		},
+		ExecutableName: fmt.Sprintf("smartcut_%s_%s", runtime.GOOS, runtime.GOARCH),
+		Version:        SmartCutVersion,
+	}
+
+	if _, err := u.Update(); err != nil {
+		log.Println(err)
+	}
+
 	return nil
 }
 
