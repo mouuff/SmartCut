@@ -40,13 +40,15 @@ func (cmd *SmartCutCmd) Run() error {
 		return errors.New("-config parameter required")
 	}
 
+	fmt.Println(utils.GetConfigurationFilePath())
+
 	var config types.SmartCutConfig
 	err := utils.ReadFromJson(cmd.config, &config)
 	if err != nil {
 		return err
 	}
 
-	b, err := brain.NewOllamaBrain("llama3.2")
+	b, err := brain.NewOllamaBrain(config.Model)
 
 	if err != nil {
 		panic(err)
@@ -77,18 +79,7 @@ func (cmd *SmartCutCmd) Run() error {
 }
 
 func printConfigurationTemplate() {
-	configTemplate := &types.SmartCutConfig{
-		Model:          "mistral",
-		MinRowsVisible: 7,
-		PromptConfigs: []*types.PromptConfig{
-			&types.PromptConfig{
-				Title:          "Translate to French",
-				PropertyName:   "translated_text",
-				PromptTemplate: "Translate this to french: '{{input}}'",
-			},
-		},
-	}
-
+	configTemplate := utils.GetDefaultConfiguration()
 	jsonData, err := json.MarshalIndent(configTemplate, "", "  ")
 	if err != nil {
 		panic(err)
