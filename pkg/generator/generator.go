@@ -35,7 +35,7 @@ func (o *ResultsGeneratorImpl) Start() {
 	go func() {
 		// Listen to clipboard changes
 		for data := range o.inputReader.GetChannel() {
-			o.generateForString(string(data))
+			o.generateForString(data.Text)
 		}
 
 		panic("unreachable")

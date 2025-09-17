@@ -27,6 +27,12 @@ type GenerationResult struct {
 	Text         string
 }
 
+// InputResult represents the result of a user input
+type InputResult struct {
+	IsExplicit bool
+	Text       string
+}
+
 type Brain interface {
 	GenerateString(ctx context.Context, propertyName, prompt string) (string, error)
 }
@@ -37,5 +43,5 @@ type ResultsGenerator interface {
 }
 
 type InputReader interface {
-	GetChannel() chan string
+	GetChannel() chan InputResult
 }

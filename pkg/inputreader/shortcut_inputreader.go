@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"fmt"
 	"syscall"
-	"time"
 	"unsafe"
 
+	"github.com/mouuff/SmartCuts/pkg/types"
 	"golang.design/x/clipboard"
 )
 
@@ -52,17 +52,16 @@ func (h *Hotkey) String() string {
 }
 
 type ShortcutInputReader struct {
-	ch          chan string
-	refreshRate time.Duration
+	ch chan types.InputResult
 }
 
 func NewShortcutInputReader() *ShortcutInputReader {
 	return &ShortcutInputReader{
-		ch: make(chan string),
+		ch: make(chan types.InputResult),
 	}
 }
 
-func (s *ShortcutInputReader) GetChannel() chan string {
+func (s *ShortcutInputReader) GetChannel() chan types.InputResult {
 	return s.ch
 }
 
@@ -107,7 +106,10 @@ func (s *ShortcutInputReader) Start() {
 					rawclip := clipboard.Read(clipboard.FmtText)
 
 					if rawclip != nil {
-						s.ch <- string(rawclip)
+						s.ch <- types.InputResult{
+							Text:       string(rawclip),
+							IsExplicit: true,
+						}
 					}
 				}
 			}
