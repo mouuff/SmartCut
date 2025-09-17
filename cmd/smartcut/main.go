@@ -25,7 +25,7 @@ type SmartCutCmd struct {
 // Init initializes the command
 func (cmd *SmartCutCmd) Init(args []string) error {
 	cmd.flagSet = flag.NewFlagSet("smartcut", flag.ExitOnError)
-	cmd.flagSet.StringVar(&cmd.config, "config", "", "configuration file (required)")
+	cmd.flagSet.StringVar(&cmd.config, "config", "", "configuration file override")
 	return cmd.flagSet.Parse(args)
 }
 
