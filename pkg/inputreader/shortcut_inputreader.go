@@ -66,11 +66,6 @@ func (s *ShortcutInputReader) GetChannel() chan types.InputResult {
 }
 
 func (s *ShortcutInputReader) Start() {
-	err := clipboard.Init()
-	if err != nil {
-		panic(err)
-	}
-
 	go func() {
 		user32 := syscall.MustLoadDLL("user32")
 

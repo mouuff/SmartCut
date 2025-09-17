@@ -13,6 +13,7 @@ import (
 	"github.com/mouuff/SmartCuts/pkg/generator"
 	"github.com/mouuff/SmartCuts/pkg/inputreader"
 	"github.com/mouuff/SmartCuts/pkg/utils"
+	"golang.design/x/clipboard"
 )
 
 type SmartCutCmd struct {
@@ -37,6 +38,11 @@ func (cmd *SmartCutCmd) Run() error {
 
 	b, err := brain.NewOllamaBrain(config.Model)
 
+	if err != nil {
+		panic(err)
+	}
+
+	err = clipboard.Init()
 	if err != nil {
 		panic(err)
 	}

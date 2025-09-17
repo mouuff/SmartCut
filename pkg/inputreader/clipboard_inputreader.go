@@ -20,10 +20,6 @@ func NewClipboardInputReader(context context.Context) *ClipboardInputReader {
 }
 
 func (c *ClipboardInputReader) Start() {
-	err := clipboard.Init()
-	if err != nil {
-		panic(err)
-	}
 
 	clipch := clipboard.Watch(c.context, clipboard.FmtText)
 
