@@ -36,6 +36,7 @@ func GetConfigurationFilePath() string {
 
 func GetDefaultConfiguration() *types.SmartCutConfig {
 	return &types.SmartCutConfig{
+		HostUrl:        "default",
 		Model:          "llama3.2",
 		MinRowsVisible: 7,
 		PromptConfigs: []*types.PromptConfig{

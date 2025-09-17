@@ -49,7 +49,7 @@ func (cmd *SmartCutCmd) Run() error {
 		return err
 	}
 
-	b, err := brain.NewOllamaBrain(config.Model)
+	b, err := brain.NewOllamaBrain(config.HostUrl, config.Model)
 	if err != nil {
 		panic(err)
 	}

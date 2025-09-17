@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"net/url"
 
 	"github.com/ollama/ollama/api"
 )
@@ -23,8 +25,22 @@ type OllamaBrain struct {
 	Client *api.Client
 }
 
-func NewOllamaBrain(model string) (*OllamaBrain, error) {
-	client, err := api.ClientFromEnvironment()
+func getClient(hosturl string) (*api.Client, error) {
+	if hosturl == "" || hosturl == "default" {
+		return api.ClientFromEnvironment()
+	} else {
+		u, err := url.Parse(hosturl)
+
+		if err != nil {
+			return nil, err
+		}
+
+		return api.NewClient(u, http.DefaultClient), nil
+	}
+}
+
+func NewOllamaBrain(hosturl, model string) (*OllamaBrain, error) {
+	client, err := getClient(hosturl)
 
 	if err != nil {
 		return nil, err
