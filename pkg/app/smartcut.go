@@ -1,4 +1,4 @@
-package view
+package app
 
 import (
 	"fmt"
@@ -13,14 +13,14 @@ type Item struct {
 	Content string
 }
 
-type ListApp struct {
+type SmartCutApp struct {
 	items         []Item
 	listContainer *fyne.Container
 	window        fyne.Window
 }
 
-func NewListApp(w fyne.Window) *ListApp {
-	la := &ListApp{
+func NewSmartCutApp(w fyne.Window) *SmartCutApp {
+	la := &SmartCutApp{
 		items: []Item{
 			{"Item 1", "This is the content of item 1"},
 			{"Item 2", "This is the content of item 2"},
@@ -37,7 +37,7 @@ func NewListApp(w fyne.Window) *ListApp {
 }
 
 // UpdateList refreshes the UI with current items
-func (la *ListApp) UpdateList() {
+func (la *SmartCutApp) UpdateList() {
 	la.listContainer.Objects = nil
 	for _, item := range la.items {
 		title := widget.NewLabel(item.Title)
@@ -58,13 +58,13 @@ func (la *ListApp) UpdateList() {
 }
 
 // AddItem appends a new item and refreshes the view
-func (la *ListApp) AddItem(title, content string) {
+func (la *SmartCutApp) AddItem(title, content string) {
 	la.items = append(la.items, Item{Title: title, Content: content})
 	la.UpdateList()
 }
 
 // Layout builds the full UI
-func (la *ListApp) Layout() fyne.CanvasObject {
+func (la *SmartCutApp) Layout() fyne.CanvasObject {
 	addBtn := widget.NewButton("Add Item", func() {
 		newIndex := len(la.items) + 1
 		la.AddItem(fmt.Sprintf("Item %d", newIndex),

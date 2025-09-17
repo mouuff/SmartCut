@@ -11,7 +11,7 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
-	"github.com/mouuff/SmartCuts/pkg/view"
+	smartcutapp "github.com/mouuff/SmartCuts/pkg/app"
 	"golang.design/x/clipboard"
 )
 
@@ -45,9 +45,9 @@ func (cmd *SmartCutCmd) Run() error {
 	a := app.New()
 	w := a.NewWindow("SmartCuts")
 
-	listApp := view.NewListApp(w)
+	smartcutapp := smartcutapp.NewSmartCutApp(w)
 
-	w.SetContent(listApp.Layout())
+	w.SetContent(smartcutapp.Layout())
 	w.Resize(fyne.NewSize(500, 400))
 	w.ShowAndRun()
 
