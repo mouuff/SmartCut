@@ -25,18 +25,25 @@ const SmartCutVersion string = "v0.0.1"
 type SmartCutCmd struct {
 	flagSet *flag.FlagSet
 
-	config string
+	config   string
+	printBin bool
 }
 
 // Init initializes the command
 func (cmd *SmartCutCmd) Init(args []string) error {
 	cmd.flagSet = flag.NewFlagSet("smartcut", flag.ExitOnError)
 	cmd.flagSet.StringVar(&cmd.config, "config", "", "configuration file override")
+	cmd.flagSet.BoolVar(&cmd.printBin, "printBin", false, "prints the expected binary name")
 	return cmd.flagSet.Parse(args)
 }
 
 // Run runs the command
 func (cmd *SmartCutCmd) Run() error {
+	if cmd.printBin {
+		fmt.Printf("smartcut_%s_%s\n", runtime.GOOS, runtime.GOARCH)
+		return nil
+	}
+
 	config, err := utils.GetOrCreateConfiguration(cmd.config)
 	if err != nil {
 		return err
