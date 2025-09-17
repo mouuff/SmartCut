@@ -11,6 +11,7 @@ import (
 	smartcutapp "github.com/mouuff/SmartCuts/pkg/app"
 	"github.com/mouuff/SmartCuts/pkg/brain"
 	"github.com/mouuff/SmartCuts/pkg/generator"
+	"github.com/mouuff/SmartCuts/pkg/inputreader"
 	"github.com/mouuff/SmartCuts/pkg/utils"
 )
 
@@ -40,12 +41,16 @@ func (cmd *SmartCutCmd) Run() error {
 		panic(err)
 	}
 
-	rg := generator.NewClipboardGenerator(context.Background(), b, config)
+	ir := inputreader.NewClipboardInputReader(context.Background())
+	rg := generator.NewResultGenerator(context.Background(), b, ir, config)
 
 	a := app.New()
 	w := a.NewWindow("SmartCuts")
 
 	smartcut := smartcutapp.NewSmartCutApp(w, config, rg)
+
+	// Start the input reader
+	go ir.Start()
 
 	// Start listening to clipboard results
 	go smartcut.Start()

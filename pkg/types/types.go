@@ -35,3 +35,7 @@ type ResultsGenerator interface {
 	GetChannel() chan GenerationResult
 	ReGenerate()
 }
+
+type InputReader interface {
+	GetChannel() chan string
+}

@@ -6,53 +6,50 @@ import (
 	"strings"
 
 	"github.com/mouuff/SmartCuts/pkg/types"
-	"golang.design/x/clipboard"
 )
 
-type ClipboardGenerator struct {
-	currentClipboard string
-	ch               chan types.GenerationResult
-	Context          context.Context
-	Brain            types.Brain
-	Config           *types.SmartCutConfig
+type ResultsGeneratorImpl struct {
+	lastTextRead string
+	inputReader  types.InputReader
+	ch           chan types.GenerationResult
+	context      context.Context
+	brain        types.Brain
+	Config       *types.SmartCutConfig
 }
 
-func NewClipboardGenerator(context context.Context, brain types.Brain, config *types.SmartCutConfig) *ClipboardGenerator {
-	return &ClipboardGenerator{
-		ch:      make(chan types.GenerationResult),
-		Context: context,
-		Config:  config,
-		Brain:   brain,
+func NewResultGenerator(
+	context context.Context,
+	brain types.Brain,
+	inputReader types.InputReader,
+	config *types.SmartCutConfig) *ResultsGeneratorImpl {
+	return &ResultsGeneratorImpl{
+		inputReader: inputReader,
+		ch:          make(chan types.GenerationResult),
+		context:     context,
+		Config:      config,
+		brain:       brain,
 	}
 }
 
-func (o *ClipboardGenerator) Start() {
-	// Init returns an error if the package is not ready for use.
-	err := clipboard.Init()
-	if err != nil {
-		panic(err)
-	}
-
-	ch := clipboard.Watch(o.Context, clipboard.FmtText)
-
+func (o *ResultsGeneratorImpl) Start() {
 	// Listen to clipboard changes
-	for data := range ch {
+	for data := range o.inputReader.GetChannel() {
 		o.generateForString(string(data))
 	}
 
 	panic("unreachable")
 }
 
-func (o *ClipboardGenerator) GetChannel() chan types.GenerationResult {
+func (o *ResultsGeneratorImpl) GetChannel() chan types.GenerationResult {
 	return o.ch
 }
 
-func (o *ClipboardGenerator) ReGenerate() {
-	o.generateForString(o.currentClipboard)
+func (o *ResultsGeneratorImpl) ReGenerate() {
+	o.generateForString(o.lastTextRead)
 }
 
-func (o *ClipboardGenerator) generateForString(data string) {
-	o.currentClipboard = data
+func (o *ResultsGeneratorImpl) generateForString(data string) {
+	o.lastTextRead = data
 
 	if o.Config.Debug {
 		log.Println("Clipboard changed:", data)
@@ -64,14 +61,14 @@ func (o *ClipboardGenerator) generateForString(data string) {
 	}
 }
 
-func (o *ClipboardGenerator) generateForPromptConfig(clipboardText string, promptConfig *types.PromptConfig) {
+func (o *ResultsGeneratorImpl) generateForPromptConfig(clipboardText string, promptConfig *types.PromptConfig) {
 	o.ch <- types.GenerationResult{
 		Text:         "Generating...",
 		PromptConfig: promptConfig,
 	}
 
 	prompt := strings.ReplaceAll(promptConfig.PromptTemplate, "{{input}}", clipboardText)
-	result, err := o.Brain.GenerateString(o.Context, promptConfig.PropertyName, prompt)
+	result, err := o.brain.GenerateString(o.context, promptConfig.PropertyName, prompt)
 
 	if o.Config.Debug {
 		if err != nil {
