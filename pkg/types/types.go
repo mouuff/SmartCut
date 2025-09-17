@@ -14,10 +14,11 @@ type PromptConfig struct {
 
 // SmartCutConfig represents the overall configuration for SmartCut
 type SmartCutConfig struct {
-	Model          string
-	MinRowsVisible int
-	Debug          bool
-	PromptConfigs  []*PromptConfig
+	Model              string
+	MinRowsVisible     int
+	Debug              bool
+	TriggerOnClipboard bool
+	PromptConfigs      []*PromptConfig
 }
 
 // GenerationResult represents the result of a generation
