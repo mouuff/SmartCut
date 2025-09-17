@@ -32,7 +32,7 @@ func (o *ClipboardGenerator) Start() {
 		panic(err)
 	}
 
-	ch := clipboard.Watch(context.TODO(), clipboard.FmtText)
+	ch := clipboard.Watch(o.Context, clipboard.FmtText)
 
 	// Listen to clipboard changes
 	for data := range ch {
