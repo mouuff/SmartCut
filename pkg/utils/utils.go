@@ -40,13 +40,13 @@ func GetDefaultConfiguration() *types.SmartCutConfig {
 			{
 				Index:          0,
 				Title:          "Rewrite formally",
-				PropertyName:   "result_text",
+				PropertyName:   "result",
 				PromptTemplate: "Rewrite this formally: '{{input}}'",
 			},
 			{
 				Index:          1,
 				Title:          "Rewrite for clarity",
-				PropertyName:   "result_text",
+				PropertyName:   "result",
 				PromptTemplate: "Rewrite this for clarity: '{{input}}'",
 			},
 		},
