@@ -54,11 +54,16 @@ func GetDefaultConfiguration() *types.SmartCutConfig {
 
 }
 
-func GetOrCreateConfiguration() (*types.SmartCutConfig, error) {
-	configPath, err := GetConfigurationFilePath()
-	if err != nil {
-		return nil, err
+func GetOrCreateConfiguration(configPath string) (*types.SmartCutConfig, error) {
+	var err error
+
+	if configPath == "" {
+		configPath, err = GetConfigurationFilePath()
+		if err != nil {
+			return nil, err
+		}
 	}
+
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 
 		jsonData, err := json.MarshalIndent(GetDefaultConfiguration(), "", "  ")

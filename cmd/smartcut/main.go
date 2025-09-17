@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
-	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -33,14 +31,7 @@ func (cmd *SmartCutCmd) Init(args []string) error {
 
 // Run runs the command
 func (cmd *SmartCutCmd) Run() error {
-	if cmd.config == "" {
-		log.Println("Please pass the configuration file using -config")
-		log.Println("Here is an example configuration:")
-		printConfigurationTemplate()
-		return errors.New("-config parameter required")
-	}
-
-	fmt.Println(utils.GetConfigurationFilePath())
+	fmt.Println(utils.GetOrCreateConfiguration(cmd.config))
 
 	var config types.SmartCutConfig
 	err := utils.ReadFromJson(cmd.config, &config)
@@ -76,16 +67,6 @@ func (cmd *SmartCutCmd) Run() error {
 	w.Resize(fyne.NewSize(800, 400))
 	w.ShowAndRun()
 	return nil
-}
-
-func printConfigurationTemplate() {
-	configTemplate := utils.GetDefaultConfiguration()
-	jsonData, err := json.MarshalIndent(configTemplate, "", "  ")
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println(string(jsonData))
 }
 
 func main() {
