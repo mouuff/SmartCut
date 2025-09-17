@@ -52,16 +52,13 @@ func (h *Hotkey) String() string {
 }
 
 type ShortcutInputReader struct {
-	user32      *syscall.DLL
 	ch          chan string
 	refreshRate time.Duration
 }
 
 func NewShortcutInputReader() *ShortcutInputReader {
 	return &ShortcutInputReader{
-		user32:      nil,
-		ch:          make(chan string),
-		refreshRate: time.Millisecond * 10,
+		ch: make(chan string),
 	}
 }
 
@@ -75,32 +72,32 @@ func (s *ShortcutInputReader) Start() {
 		panic(err)
 	}
 
-	s.user32 = syscall.MustLoadDLL("user32")
-
-	reghotkey := s.user32.MustFindProc("RegisterHotKey")
-	// Hotkeys to listen to:
-	keys := map[int16]*Hotkey{
-		1: {1, ModAlt + ModShift, 'O'}, // ALT+SHIFT+O
-		2: {2, ModAlt + ModCtrl, 'X'},  // ALT+CTRL+X
-	}
-
-	// Register hotkeys:
-	for _, v := range keys {
-		r1, _, err := reghotkey.Call(
-			0, uintptr(v.Id), uintptr(v.Modifiers), uintptr(v.KeyCode))
-		if r1 == 1 {
-			fmt.Println("Registered", v)
-		} else {
-			fmt.Println("Failed to register", v, ", error:", err)
-		}
-	}
-
-	peekmsg := s.user32.MustFindProc("PeekMessageW")
-
 	go func() {
+		user32 := syscall.MustLoadDLL("user32")
+
+		reghotkey := user32.MustFindProc("RegisterHotKey")
+		// Hotkeys to listen to:
+		keys := map[int16]*Hotkey{
+			1: {1, ModAlt + ModShift, 'O'}, // ALT+SHIFT+O
+			2: {2, ModAlt + ModCtrl, 'X'},  // ALT+CTRL+X
+		}
+
+		// Register hotkeys:
+		for _, v := range keys {
+			r1, _, err := reghotkey.Call(
+				0, uintptr(v.Id), uintptr(v.Modifiers), uintptr(v.KeyCode))
+			if r1 == 1 {
+				fmt.Println("Registered", v)
+			} else {
+				fmt.Println("Failed to register", v, ", error:", err)
+			}
+		}
+
+		getmsg := user32.MustFindProc("GetMessageW")
+
 		for {
 			var msg = &MSG{}
-			peekmsg.Call(uintptr(unsafe.Pointer(msg)), 0, 0, 0, 1)
+			getmsg.Call(uintptr(unsafe.Pointer(msg)), 0, 0, 0)
 
 			// Registered id is in the WPARAM field:
 			if id := msg.WPARAM; id != 0 {
@@ -114,8 +111,6 @@ func (s *ShortcutInputReader) Start() {
 					}
 				}
 			}
-
-			time.Sleep(s.refreshRate)
 		}
 	}()
 }
