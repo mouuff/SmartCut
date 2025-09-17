@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 
+	"github.com/mouuff/SmartCuts/pkg/types"
 	"golang.design/x/clipboard"
 )
 
@@ -23,13 +24,15 @@ type GenerationRequest struct {
 type Orchestrator struct {
 	Context context.Context
 	Brain   Brain
+	Config  *types.SmartCutConfig
 	In      chan GenerationRequest
 	Out     chan GenerationResult
 }
 
-func NewOrchestrator(context context.Context, brain Brain) *Orchestrator {
+func NewOrchestrator(context context.Context, brain Brain, config *types.SmartCutConfig) *Orchestrator {
 	return &Orchestrator{
 		Context: context,
+		Config:  config,
 		Brain:   brain,
 		In:      make(chan GenerationRequest),
 		Out:     make(chan GenerationResult),
