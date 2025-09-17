@@ -41,7 +41,9 @@ func (cmd *SmartCutCmd) Run() error {
 		panic(err)
 	}
 
-	ir := inputreader.NewClipboardInputReader(context.Background())
+	// ir := inputreader.NewClipboardInputReader(context.Background())
+
+	ir := inputreader.NewShortcutInputReader()
 	rg := generator.NewResultGenerator(context.Background(), b, ir, config)
 
 	a := app.New()
@@ -50,13 +52,12 @@ func (cmd *SmartCutCmd) Run() error {
 	smartcut := smartcutapp.NewSmartCutApp(w, config, rg)
 
 	// Start the input reader
-	go ir.Start()
+	ir.Start()
 
 	// Start listening to clipboard results
-	go smartcut.Start()
-
+	smartcut.Start()
 	// Start the generator
-	go rg.Start()
+	rg.Start()
 
 	w.SetContent(smartcut.Layout())
 	w.Resize(fyne.NewSize(800, 400))

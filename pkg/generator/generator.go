@@ -32,12 +32,14 @@ func NewResultGenerator(
 }
 
 func (o *ResultsGeneratorImpl) Start() {
-	// Listen to clipboard changes
-	for data := range o.inputReader.GetChannel() {
-		o.generateForString(string(data))
-	}
+	go func() {
+		// Listen to clipboard changes
+		for data := range o.inputReader.GetChannel() {
+			o.generateForString(string(data))
+		}
 
-	panic("unreachable")
+		panic("unreachable")
+	}()
 }
 
 func (o *ResultsGeneratorImpl) GetChannel() chan types.GenerationResult {

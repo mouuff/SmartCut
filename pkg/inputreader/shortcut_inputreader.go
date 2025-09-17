@@ -6,6 +6,8 @@ import (
 	"syscall"
 	"time"
 	"unsafe"
+
+	"golang.design/x/clipboard"
 )
 
 const (
@@ -59,7 +61,7 @@ func NewShortcutInputReader() *ShortcutInputReader {
 	return &ShortcutInputReader{
 		user32:      nil,
 		ch:          make(chan string),
-		refreshRate: time.Millisecond * 50,
+		refreshRate: time.Millisecond * 10,
 	}
 }
 
@@ -67,22 +69,19 @@ func (s *ShortcutInputReader) GetChannel() chan string {
 	return s.ch
 }
 
-func (s *ShortcutInputReader) Release() {
-	if s.user32 != nil {
-		s.user32.Release()
-		s.user32 = nil
-	}
-}
-
 func (s *ShortcutInputReader) Start() {
+	err := clipboard.Init()
+	if err != nil {
+		panic(err)
+	}
+
 	s.user32 = syscall.MustLoadDLL("user32")
 
 	reghotkey := s.user32.MustFindProc("RegisterHotKey")
 	// Hotkeys to listen to:
 	keys := map[int16]*Hotkey{
-		1: {1, ModAlt + ModCtrl, 'O'},  // ALT+CTRL+O
-		2: {2, ModAlt + ModShift, 'M'}, // ALT+SHIFT+M
-		3: {3, ModAlt + ModCtrl, 'X'},  // ALT+CTRL+X
+		1: {1, ModAlt + ModShift, 'O'}, // ALT+SHIFT+O
+		2: {2, ModAlt + ModCtrl, 'X'},  // ALT+CTRL+X
 	}
 
 	// Register hotkeys:
@@ -97,19 +96,26 @@ func (s *ShortcutInputReader) Start() {
 	}
 
 	peekmsg := s.user32.MustFindProc("PeekMessageW")
-	for {
-		var msg = &MSG{}
-		peekmsg.Call(uintptr(unsafe.Pointer(msg)), 0, 0, 0, 1)
 
-		// Registered id is in the WPARAM field:
-		if id := msg.WPARAM; id != 0 {
-			fmt.Println("Hotkey pressed:", keys[id])
-			if id == 3 { // CTRL+ALT+X = Exit
-				fmt.Println("CTRL+ALT+X pressed, goodbye...")
-				return
+	go func() {
+		for {
+			var msg = &MSG{}
+			peekmsg.Call(uintptr(unsafe.Pointer(msg)), 0, 0, 0, 1)
+
+			// Registered id is in the WPARAM field:
+			if id := msg.WPARAM; id != 0 {
+				fmt.Println("Hotkey pressed:", keys[id])
+
+				if id == 1 {
+					rawclip := clipboard.Read(clipboard.FmtText)
+
+					if rawclip != nil {
+						s.ch <- string(rawclip)
+					}
+				}
 			}
-		}
 
-		time.Sleep(time.Millisecond * 10)
-	}
+			time.Sleep(s.refreshRate)
+		}
+	}()
 }

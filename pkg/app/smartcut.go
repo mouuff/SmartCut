@@ -52,11 +52,13 @@ func NewSmartCutApp(
 }
 
 func (sc *SmartCutApp) Start() {
-	for res := range sc.rg.GetChannel() {
-		fyne.Do(func() {
-			sc.UpdateItem(res)
-		})
-	}
+	go func() {
+		for res := range sc.rg.GetChannel() {
+			fyne.Do(func() {
+				sc.UpdateItem(res)
+			})
+		}
+	}()
 }
 
 func (sc *SmartCutApp) RefreshList() {
