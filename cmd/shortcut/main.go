@@ -56,9 +56,8 @@ func main() {
 	reghotkey := user32.MustFindProc("RegisterHotKey")
 	// Hotkeys to listen to:
 	keys := map[int16]*Hotkey{
-		1: {1, ModAlt + ModCtrl, 'O'},  // ALT+CTRL+O
-		2: {2, ModAlt + ModShift, 'M'}, // ALT+SHIFT+M
-		3: {3, ModAlt + ModCtrl, 'X'},  // ALT+CTRL+X
+		1: {1, ModAlt + ModShift, 'G'}, // ALT+SHIFT+G
+		2: {2, ModAlt + ModCtrl, 'X'},  // ALT+CTRL+X
 	}
 
 	// Register hotkeys:
@@ -80,7 +79,7 @@ func main() {
 		// Registered id is in the WPARAM field:
 		if id := msg.WPARAM; id != 0 {
 			fmt.Println("Hotkey pressed:", keys[id])
-			if id == 3 { // CTRL+ALT+X = Exit
+			if id == 2 { // CTRL+ALT+X = Exit
 				fmt.Println("CTRL+ALT+X pressed, goodbye...")
 				return
 			}
