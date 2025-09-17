@@ -126,19 +126,16 @@ func (sc *SmartCutApp) Layout() fyne.CanvasObject {
 	helpmsg := `Shortcut for processing the current clipboard: Alt+Shift+G
 	Configuration file: {{configpath}}`
 
-	configpath, err := utils.GetConfigurationFilePath()
-
-	if err != nil {
-		panic(err)
-	}
-
-	helpmsg = strings.ReplaceAll(helpmsg, "{{configpath}}", configpath)
+	helpmsg = strings.ReplaceAll(helpmsg, "{{configpath}}", utils.GetConfigurationFilePath())
 
 	// Menu bar with Help
 	menu := fyne.NewMainMenu(
-		fyne.NewMenu("Help",
-			fyne.NewMenuItem("About", func() {
+		fyne.NewMenu("Menu",
+			fyne.NewMenuItem("Help", func() {
 				dialog.ShowInformation("About SmartCut", helpmsg, sc.window)
+			}),
+			fyne.NewMenuItem("Configure", func() {
+				utils.OpenFile(utils.GetConfigurationFilePath())
 			}),
 		),
 	)

@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 
 	"github.com/mouuff/SmartCuts/pkg/types"
 )
@@ -22,14 +24,14 @@ func ReadFromJson(path string, dataOut interface{}) error {
 	return nil
 }
 
-func GetConfigurationFilePath() (string, error) {
+func GetConfigurationFilePath() string {
 	homeDir, err := os.UserHomeDir()
 
 	if err != nil {
-		return "", fmt.Errorf("could not determine user home directory: %w", err)
+		panic(err)
 	}
 
-	return filepath.Join(homeDir, ".smartcut.json"), nil
+	return filepath.Join(homeDir, ".smartcut.json")
 }
 
 func GetDefaultConfiguration() *types.SmartCutConfig {
@@ -58,10 +60,7 @@ func GetOrCreateConfiguration(configPath string) (*types.SmartCutConfig, error) 
 	var err error
 
 	if configPath == "" {
-		configPath, err = GetConfigurationFilePath()
-		if err != nil {
-			return nil, err
-		}
+		configPath = GetConfigurationFilePath()
 	}
 
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
@@ -85,4 +84,28 @@ func GetOrCreateConfiguration(configPath string) (*types.SmartCutConfig, error) 
 	}
 
 	return &config, nil
+}
+
+func OpenFile(path string) error {
+	var cmd *exec.Cmd
+
+	switch runtime.GOOS {
+	case "darwin":
+		// macOS
+		cmd = exec.Command("open", path)
+	case "linux":
+		// Linux
+		cmd = exec.Command("xdg-open", path)
+	case "windows":
+		// Windows
+		cmd = exec.Command("cmd", "/c", "start", "", path)
+	default:
+		return fmt.Errorf("unsupported platform")
+	}
+
+	// Make sure it inherits environment variables
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	return cmd.Start()
 }
