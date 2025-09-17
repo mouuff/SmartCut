@@ -10,18 +10,18 @@ import (
 )
 
 type ClipboardGenerator struct {
+	ch      chan types.GenerationResult
 	Context context.Context
 	Brain   types.Brain
 	Config  *types.SmartCutConfig
-	Out     chan types.GenerationResult
 }
 
 func NewClipboardGenerator(context context.Context, brain types.Brain, config *types.SmartCutConfig) *ClipboardGenerator {
 	return &ClipboardGenerator{
+		ch:      make(chan types.GenerationResult),
 		Context: context,
 		Config:  config,
 		Brain:   brain,
-		Out:     make(chan types.GenerationResult),
 	}
 }
 
@@ -36,21 +36,25 @@ func (o *ClipboardGenerator) Start() {
 
 	// Listen to clipboard changes
 	for data := range ch {
-		o.GenerateForString(string(data))
+		o.generateForString(string(data))
 	}
 
 	panic("unreachable")
 }
 
-func (o *ClipboardGenerator) GenerateForString(data string) {
+func (o *ClipboardGenerator) GetChannel() chan types.GenerationResult {
+	return o.ch
+}
+
+func (o *ClipboardGenerator) generateForString(data string) {
 	// For each prompt config, generate the result
 	for _, promptConfig := range o.Config.PromptConfigs {
-		go o.GenerateForPromptConfig(data, promptConfig)
+		go o.generateForPromptConfig(data, promptConfig)
 	}
 }
 
-func (o *ClipboardGenerator) GenerateForPromptConfig(clipboardText string, promptConfig *types.PromptConfig) {
-	o.Out <- types.GenerationResult{
+func (o *ClipboardGenerator) generateForPromptConfig(clipboardText string, promptConfig *types.PromptConfig) {
+	o.ch <- types.GenerationResult{
 		Text:         "Generating...",
 		PromptConfig: promptConfig,
 	}
@@ -70,7 +74,7 @@ func (o *ClipboardGenerator) GenerateForPromptConfig(clipboardText string, promp
 		result = "Error while generating: " + err.Error()
 	}
 
-	o.Out <- types.GenerationResult{
+	o.ch <- types.GenerationResult{
 		Text:         result,
 		PromptConfig: promptConfig,
 	}

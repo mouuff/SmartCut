@@ -40,23 +40,18 @@ func (cmd *SmartCutCmd) Run() error {
 		panic(err)
 	}
 
-	o := generator.NewClipboardGenerator(context.Background(), b, config)
-
-	// Start listening to clipboard changes
-	go o.Start()
+	rg := generator.NewClipboardGenerator(context.Background(), b, config)
 
 	a := app.New()
 	w := a.NewWindow("SmartCuts")
 
-	smartcut := smartcutapp.NewSmartCutApp(w, config)
+	smartcut := smartcutapp.NewSmartCutApp(w, config, rg)
 
-	go func() {
-		for res := range o.Out {
-			fyne.Do(func() {
-				smartcut.UpdateItem(res)
-			})
-		}
-	}()
+	// Start listening to clipboard results
+	go smartcut.Start()
+
+	// Start the generator
+	go rg.Start()
 
 	w.SetContent(smartcut.Layout())
 	w.Resize(fyne.NewSize(800, 400))

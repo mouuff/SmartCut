@@ -16,15 +16,18 @@ type Item struct {
 }
 
 type SmartCutApp struct {
-	lastGenerationResult *types.GenerationResult
-	items                []Item
-	listContainer        *fyne.Container
-	window               fyne.Window
+	rg            types.ResultsGenerator
+	items         []Item
+	listContainer *fyne.Container
+	window        fyne.Window
 
 	Config *types.SmartCutConfig
 }
 
-func NewSmartCutApp(w fyne.Window, config *types.SmartCutConfig) *SmartCutApp {
+func NewSmartCutApp(
+	w fyne.Window,
+	config *types.SmartCutConfig,
+	rg types.ResultsGenerator) *SmartCutApp {
 
 	items := make([]Item, 0)
 	for _, hook := range config.PromptConfigs {
@@ -39,12 +42,21 @@ func NewSmartCutApp(w fyne.Window, config *types.SmartCutConfig) *SmartCutApp {
 		listContainer: container.NewVBox(),
 		window:        w,
 		Config:        config,
+		rg:            rg,
 	}
 
 	// Render initial list
 	la.RefreshList()
 
 	return la
+}
+
+func (sc *SmartCutApp) Start() {
+	for res := range sc.rg.GetChannel() {
+		fyne.Do(func() {
+			sc.UpdateItem(res)
+		})
+	}
 }
 
 func (sc *SmartCutApp) RefreshList() {
@@ -86,7 +98,6 @@ func (sc *SmartCutApp) RefreshList() {
 
 // AddItem appends a new item and refreshes the view
 func (la *SmartCutApp) UpdateItem(result types.GenerationResult) {
-	la.lastGenerationResult = &result
 	la.items[result.PromptConfig.Index].Content = result.Text
 	la.RefreshList()
 }
@@ -100,9 +111,7 @@ func (la *SmartCutApp) AddItem(title, content string) {
 // Layout builds the full UI
 func (la *SmartCutApp) Layout() fyne.CanvasObject {
 	addBtn := widget.NewButton("ReGenerate", func() {
-		if la.lastGenerationResult != nil {
-			clipboard.Write(clipboard.FmtText, []byte(la.lastGenerationResult.OriginalText))
-		}
+		// TODO: trigger regeneration
 	})
 
 	return container.NewBorder(nil, addBtn, nil, nil, la.listContainer)

@@ -30,3 +30,7 @@ type GenerationResult struct {
 type Brain interface {
 	GenerateString(ctx context.Context, propertyName, prompt string) (string, error)
 }
+
+type ResultsGenerator interface {
+	GetChannel() chan GenerationResult
+}
