@@ -37,7 +37,6 @@ func (cmd *SmartCutCmd) Run() error {
 	}
 
 	b, err := brain.NewOllamaBrain(config.Model)
-
 	if err != nil {
 		panic(err)
 	}

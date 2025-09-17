@@ -40,13 +40,11 @@ func GetDefaultConfiguration() *types.SmartCutConfig {
 		MinRowsVisible: 7,
 		PromptConfigs: []*types.PromptConfig{
 			{
-				Index:          0,
 				Title:          "Rewrite formally",
 				PromptTemplate: "Rewrite this formally: '{{input}}'",
 				PropertyName:   "formal_text",
 			},
 			{
-				Index:          1,
 				Title:          "Rewrite for clarity",
 				PromptTemplate: "Rewrite this: '{{input}}'",
 				PropertyName:   "rewritten_text",
@@ -81,6 +79,11 @@ func GetOrCreateConfiguration(configPath string) (*types.SmartCutConfig, error) 
 	err = ReadFromJson(configPath, &config)
 	if err != nil {
 		return nil, fmt.Errorf("could not read config at: %w", err)
+	}
+
+	// Making sure the indexes are set correctly
+	for i, promptConfig := range config.PromptConfigs {
+		promptConfig.Index = i
 	}
 
 	return &config, nil

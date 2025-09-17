@@ -134,6 +134,7 @@ func (sc *SmartCutApp) Layout() fyne.CanvasObject {
 			}),
 			fyne.NewMenuItem("Configure", func() {
 				utils.OpenFile(utils.GetConfigurationFilePath())
+				dialog.ShowInformation("Warning", "You must restart the application to apply configuration changes", sc.window)
 			}),
 		),
 	)
