@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"strings"
 
 	"fyne.io/fyne/v2"
@@ -86,7 +85,6 @@ func (sc *SmartCutApp) RefreshList() {
 		button := widget.NewButton("Copy", func(c string) func() {
 			return func() {
 				clipboard.Write(clipboard.FmtText, []byte(c))
-				fmt.Println(c)
 			}
 		}(item.Content))
 
