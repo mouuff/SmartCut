@@ -102,12 +102,6 @@ func (la *SmartCutApp) UpdateItem(result types.GenerationResult) {
 	la.RefreshList()
 }
 
-// AddItem appends a new item and refreshes the view
-func (la *SmartCutApp) AddItem(title, content string) {
-	la.items = append(la.items, Item{Title: title, Content: content})
-	la.RefreshList()
-}
-
 // Layout builds the full UI
 func (la *SmartCutApp) Layout() fyne.CanvasObject {
 	addBtn := widget.NewButton("ReGenerate", func() {
