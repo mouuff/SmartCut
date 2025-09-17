@@ -13,7 +13,7 @@ import (
 	"fyne.io/fyne/v2/app"
 	smartcutapp "github.com/mouuff/SmartCuts/pkg/app"
 	"github.com/mouuff/SmartCuts/pkg/brain"
-	"github.com/mouuff/SmartCuts/pkg/orchestrator"
+	"github.com/mouuff/SmartCuts/pkg/generator"
 	"github.com/mouuff/SmartCuts/pkg/types"
 	"github.com/mouuff/SmartCuts/pkg/utils"
 )
@@ -52,9 +52,10 @@ func (cmd *SmartCutCmd) Run() error {
 		panic(err)
 	}
 
-	o := orchestrator.NewOrchestrator(context.Background(), b, &config)
+	o := generator.NewClipboardGenerator(context.Background(), b, &config)
 
-	go o.StartFeedFromClipboard()
+	// Start listening to clipboard changes
+	go o.Start()
 
 	a := app.New()
 	w := a.NewWindow("SmartCuts")
@@ -72,7 +73,6 @@ func (cmd *SmartCutCmd) Run() error {
 	w.SetContent(smartcut.Layout())
 	w.Resize(fyne.NewSize(800, 400))
 	w.ShowAndRun()
-
 	return nil
 }
 

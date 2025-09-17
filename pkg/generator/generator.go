@@ -1,4 +1,4 @@
-package orchestrator
+package generator
 
 import (
 	"context"
@@ -19,15 +19,15 @@ type GenerationResult struct {
 	Text          string
 }
 
-type Orchestrator struct {
+type ClipboardGenerator struct {
 	Context context.Context
 	Brain   Brain
 	Config  *types.SmartCutConfig
 	Out     chan GenerationResult
 }
 
-func NewOrchestrator(context context.Context, brain Brain, config *types.SmartCutConfig) *Orchestrator {
-	return &Orchestrator{
+func NewClipboardGenerator(context context.Context, brain Brain, config *types.SmartCutConfig) *ClipboardGenerator {
+	return &ClipboardGenerator{
 		Context: context,
 		Config:  config,
 		Brain:   brain,
@@ -35,7 +35,7 @@ func NewOrchestrator(context context.Context, brain Brain, config *types.SmartCu
 	}
 }
 
-func (o *Orchestrator) StartFeedFromClipboard() {
+func (o *ClipboardGenerator) Start() {
 	// Init returns an error if the package is not ready for use.
 	err := clipboard.Init()
 	if err != nil {
@@ -52,7 +52,7 @@ func (o *Orchestrator) StartFeedFromClipboard() {
 	log.Println("Stopped feeding from clipboard.")
 }
 
-func (o *Orchestrator) GenerateForString(clipboardText string) {
+func (o *ClipboardGenerator) GenerateForString(clipboardText string) {
 	for _, promptConfig := range o.Config.PromptConfigs {
 		prompt := strings.ReplaceAll(promptConfig.PromptTemplate, "{{input}}", clipboardText)
 		result, err := o.Brain.GenerateString(o.Context, promptConfig.PropertyName, prompt)

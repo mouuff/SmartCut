@@ -6,7 +6,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
-	"github.com/mouuff/SmartCuts/pkg/orchestrator"
+	"github.com/mouuff/SmartCuts/pkg/generator"
 	"github.com/mouuff/SmartCuts/pkg/types"
 	"golang.design/x/clipboard"
 )
@@ -85,7 +85,7 @@ func (sc *SmartCutApp) RefreshList() {
 }
 
 // AddItem appends a new item and refreshes the view
-func (la *SmartCutApp) UpdateItem(result orchestrator.GenerationResult) {
+func (la *SmartCutApp) UpdateItem(result generator.GenerationResult) {
 	la.items[result.PromptConfig.Index].Content = result.Text
 	la.RefreshList()
 }
