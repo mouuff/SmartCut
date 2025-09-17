@@ -1,5 +1,9 @@
 package types
 
+import (
+	"context"
+)
+
 type PromptConfig struct {
 	Index          int
 	Title          string
@@ -12,4 +16,14 @@ type SmartCutConfig struct {
 	MinRowsVisible int
 	Debug          bool
 	PromptConfigs  []*PromptConfig
+}
+
+type Brain interface {
+	GenerateString(ctx context.Context, propertyName, prompt string) (string, error)
+}
+
+type GenerationResult struct {
+	PromptConfig  *PromptConfig
+	ClipboardText string
+	Text          string
 }

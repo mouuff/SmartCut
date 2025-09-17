@@ -9,29 +9,19 @@ import (
 	"golang.design/x/clipboard"
 )
 
-type Brain interface {
-	GenerateString(ctx context.Context, propertyName, prompt string) (string, error)
-}
-
-type GenerationResult struct {
-	PromptConfig  *types.PromptConfig
-	ClipboardText string
-	Text          string
-}
-
 type ClipboardGenerator struct {
 	Context context.Context
-	Brain   Brain
+	Brain   types.Brain
 	Config  *types.SmartCutConfig
-	Out     chan GenerationResult
+	Out     chan types.GenerationResult
 }
 
-func NewClipboardGenerator(context context.Context, brain Brain, config *types.SmartCutConfig) *ClipboardGenerator {
+func NewClipboardGenerator(context context.Context, brain types.Brain, config *types.SmartCutConfig) *ClipboardGenerator {
 	return &ClipboardGenerator{
 		Context: context,
 		Config:  config,
 		Brain:   brain,
-		Out:     make(chan GenerationResult),
+		Out:     make(chan types.GenerationResult),
 	}
 }
 
@@ -60,7 +50,7 @@ func (o *ClipboardGenerator) GenerateForString(data string) {
 }
 
 func (o *ClipboardGenerator) GenerateForPromptConfig(clipboardText string, promptConfig *types.PromptConfig) {
-	o.Out <- GenerationResult{
+	o.Out <- types.GenerationResult{
 		Text:         "Generating...",
 		PromptConfig: promptConfig,
 	}
@@ -80,7 +70,7 @@ func (o *ClipboardGenerator) GenerateForPromptConfig(clipboardText string, promp
 		result = "Error while generating: " + err.Error()
 	}
 
-	o.Out <- GenerationResult{
+	o.Out <- types.GenerationResult{
 		Text:         result,
 		PromptConfig: promptConfig,
 	}

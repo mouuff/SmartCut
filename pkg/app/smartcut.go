@@ -6,7 +6,6 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
-	"github.com/mouuff/SmartCuts/pkg/generator"
 	"github.com/mouuff/SmartCuts/pkg/types"
 	"golang.design/x/clipboard"
 )
@@ -17,7 +16,7 @@ type Item struct {
 }
 
 type SmartCutApp struct {
-	lastGenerationResult *generator.GenerationResult
+	lastGenerationResult *types.GenerationResult
 	items                []Item
 	listContainer        *fyne.Container
 	window               fyne.Window
@@ -86,7 +85,7 @@ func (sc *SmartCutApp) RefreshList() {
 }
 
 // AddItem appends a new item and refreshes the view
-func (la *SmartCutApp) UpdateItem(result generator.GenerationResult) {
+func (la *SmartCutApp) UpdateItem(result types.GenerationResult) {
 	la.lastGenerationResult = &result
 	la.items[result.PromptConfig.Index].Content = result.Text
 	la.RefreshList()
