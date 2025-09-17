@@ -17,9 +17,10 @@ type Item struct {
 }
 
 type SmartCutApp struct {
-	items         []Item
-	listContainer *fyne.Container
-	window        fyne.Window
+	lastGenerationResult *generator.GenerationResult
+	items                []Item
+	listContainer        *fyne.Container
+	window               fyne.Window
 
 	Config *types.SmartCutConfig
 }
@@ -86,6 +87,7 @@ func (sc *SmartCutApp) RefreshList() {
 
 // AddItem appends a new item and refreshes the view
 func (la *SmartCutApp) UpdateItem(result generator.GenerationResult) {
+	la.lastGenerationResult = &result
 	la.items[result.PromptConfig.Index].Content = result.Text
 	la.RefreshList()
 }
@@ -98,10 +100,10 @@ func (la *SmartCutApp) AddItem(title, content string) {
 
 // Layout builds the full UI
 func (la *SmartCutApp) Layout() fyne.CanvasObject {
-	addBtn := widget.NewButton("Add Item", func() {
-		newIndex := len(la.items) + 1
-		la.AddItem(fmt.Sprintf("Item %d", newIndex),
-			fmt.Sprintf("This is the content of item %d", newIndex))
+	addBtn := widget.NewButton("ReGenerate", func() {
+		if la.lastGenerationResult != nil {
+			clipboard.Write(clipboard.FmtText, []byte(la.lastGenerationResult.ClipboardText))
+		}
 	})
 
 	return container.NewBorder(nil, addBtn, nil, nil, la.listContainer)

@@ -1,0 +1,18 @@
+{
+  "Model": "llama3.2",
+  "MinRowsVisible": 7,
+  "PromptConfigs": [
+    {
+      "Index": 0,
+      "Title": "Rewrite formally",
+      "PromptTemplate": "Rewrite this formally: '{{input}}'",
+      "PropertyName": "result_text"
+    },
+    {
+      "Index": 1,
+      "Title": "Rewrite for clarity",
+      "PromptTemplate": "Rewrite this for clarity: '{{input}}'",
+      "PropertyName": "result_text"
+    }
+  ]
+}
