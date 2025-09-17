@@ -60,7 +60,7 @@ func (cmd *SmartCutCmd) Run() error {
 	a := app.New()
 	w := a.NewWindow("SmartCuts")
 
-	smartcutapp := smartcutapp.NewSmartCutApp(w)
+	smartcutapp := smartcutapp.NewSmartCutApp(w, &config, o.Out)
 
 	w.SetContent(smartcutapp.Layout())
 	w.Resize(fyne.NewSize(500, 400))

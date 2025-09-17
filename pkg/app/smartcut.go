@@ -6,6 +6,8 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
+	"github.com/mouuff/SmartCuts/pkg/orchestrator"
+	"github.com/mouuff/SmartCuts/pkg/types"
 )
 
 type Item struct {
@@ -17,27 +19,37 @@ type SmartCutApp struct {
 	items         []Item
 	listContainer *fyne.Container
 	window        fyne.Window
+
+	Ch     chan orchestrator.GenerationResult
+	Config *types.SmartCutConfig
 }
 
-func NewSmartCutApp(w fyne.Window) *SmartCutApp {
+func NewSmartCutApp(w fyne.Window, config *types.SmartCutConfig, ch chan orchestrator.GenerationResult) *SmartCutApp {
+
+	items := make([]Item, 0)
+	for _, hook := range config.Hooks {
+		items = append(items, Item{
+			Title:   hook.Title,
+			Content: "Waiting for generation...",
+		})
+	}
+
 	la := &SmartCutApp{
-		items: []Item{
-			{"Item 1", "This is the content of item 1"},
-			{"Item 2", "This is the content of item 2"},
-			{"Item 3", "This is the content of item 3"},
-		},
+		items:         items,
 		listContainer: container.NewVBox(),
 		window:        w,
+		Ch:            ch,
+		Config:        config,
 	}
 
 	// Render initial list
-	la.UpdateList()
+	la.RefreshList()
 
 	return la
 }
 
-// UpdateList refreshes the UI with current items
-func (la *SmartCutApp) UpdateList() {
+// RefreshList refreshes the UI with current items
+func (la *SmartCutApp) RefreshList() {
 	la.listContainer.Objects = nil
 	for _, item := range la.items {
 		title := widget.NewLabel(item.Title)
@@ -60,7 +72,7 @@ func (la *SmartCutApp) UpdateList() {
 // AddItem appends a new item and refreshes the view
 func (la *SmartCutApp) AddItem(title, content string) {
 	la.items = append(la.items, Item{Title: title, Content: content})
-	la.UpdateList()
+	la.RefreshList()
 }
 
 // Layout builds the full UI
