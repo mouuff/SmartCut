@@ -101,7 +101,7 @@ func (la *SmartCutApp) AddItem(title, content string) {
 func (la *SmartCutApp) Layout() fyne.CanvasObject {
 	addBtn := widget.NewButton("ReGenerate", func() {
 		if la.lastGenerationResult != nil {
-			clipboard.Write(clipboard.FmtText, []byte(la.lastGenerationResult.ClipboardText))
+			clipboard.Write(clipboard.FmtText, []byte(la.lastGenerationResult.OriginalText))
 		}
 	})
 

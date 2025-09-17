@@ -4,6 +4,7 @@ import (
 	"context"
 )
 
+// PromptConfig represents a single prompt configuration
 type PromptConfig struct {
 	Index          int
 	Title          string
@@ -11,6 +12,7 @@ type PromptConfig struct {
 	PropertyName   string
 }
 
+// SmartCutConfig represents the overall configuration for SmartCut
 type SmartCutConfig struct {
 	Model          string
 	MinRowsVisible int
@@ -18,12 +20,13 @@ type SmartCutConfig struct {
 	PromptConfigs  []*PromptConfig
 }
 
-type Brain interface {
-	GenerateString(ctx context.Context, propertyName, prompt string) (string, error)
+// GenerationResult represents the result of a generation
+type GenerationResult struct {
+	PromptConfig *PromptConfig
+	OriginalText string
+	Text         string
 }
 
-type GenerationResult struct {
-	PromptConfig  *PromptConfig
-	ClipboardText string
-	Text          string
+type Brain interface {
+	GenerateString(ctx context.Context, propertyName, prompt string) (string, error)
 }
