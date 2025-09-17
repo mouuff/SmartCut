@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"log"
 	"os"
 
@@ -12,7 +11,6 @@ import (
 	smartcutapp "github.com/mouuff/SmartCuts/pkg/app"
 	"github.com/mouuff/SmartCuts/pkg/brain"
 	"github.com/mouuff/SmartCuts/pkg/generator"
-	"github.com/mouuff/SmartCuts/pkg/types"
 	"github.com/mouuff/SmartCuts/pkg/utils"
 )
 
@@ -31,10 +29,7 @@ func (cmd *SmartCutCmd) Init(args []string) error {
 
 // Run runs the command
 func (cmd *SmartCutCmd) Run() error {
-	fmt.Println(utils.GetOrCreateConfiguration(cmd.config))
-
-	var config types.SmartCutConfig
-	err := utils.ReadFromJson(cmd.config, &config)
+	config, err := utils.GetOrCreateConfiguration(cmd.config)
 	if err != nil {
 		return err
 	}
@@ -45,7 +40,7 @@ func (cmd *SmartCutCmd) Run() error {
 		panic(err)
 	}
 
-	o := generator.NewClipboardGenerator(context.Background(), b, &config)
+	o := generator.NewClipboardGenerator(context.Background(), b, config)
 
 	// Start listening to clipboard changes
 	go o.Start()
@@ -53,7 +48,7 @@ func (cmd *SmartCutCmd) Run() error {
 	a := app.New()
 	w := a.NewWindow("SmartCuts")
 
-	smartcut := smartcutapp.NewSmartCutApp(w, &config)
+	smartcut := smartcutapp.NewSmartCutApp(w, config)
 
 	go func() {
 		for res := range o.Out {
