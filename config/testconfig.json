@@ -1,6 +1,6 @@
 {
   "Model": "mistral",
-  "Hooks": [
+  "PromptConfigs": [
     {
       "Index": 0,
       "Title": "Translate to French",

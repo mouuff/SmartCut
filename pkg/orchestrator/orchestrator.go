@@ -14,19 +14,15 @@ type Brain interface {
 }
 
 type GenerationResult struct {
-	Text string
-}
-
-type GenerationRequest struct {
-	Prompt       string
-	PropertyName string
+	PromptConfig  *types.PromptConfig
+	ClipboardText string
+	Text          string
 }
 
 type Orchestrator struct {
 	Context context.Context
 	Brain   Brain
 	Config  *types.SmartCutConfig
-	In      chan GenerationRequest
 	Out     chan GenerationResult
 }
 
@@ -35,25 +31,7 @@ func NewOrchestrator(context context.Context, brain Brain, config *types.SmartCu
 		Context: context,
 		Config:  config,
 		Brain:   brain,
-		In:      make(chan GenerationRequest),
 		Out:     make(chan GenerationResult),
-	}
-}
-
-func (o *Orchestrator) Start() {
-	for req := range o.In {
-		// Process the request (placeholder logic)
-		result, err := o.Brain.GenerateString(o.Context, req.PropertyName, req.Prompt)
-
-		if err != nil {
-			log.Println("Error generating:", err)
-			continue
-		} else {
-			log.Println("Generated:", result)
-			o.Out <- GenerationResult{
-				Text: result,
-			}
-		}
 	}
 }
 
@@ -75,9 +53,9 @@ func (o *Orchestrator) StartFeedFromClipboard() {
 }
 
 func (o *Orchestrator) GenerateForString(clipboardText string) {
-	for _, hook := range o.Config.Hooks {
-		prompt := strings.ReplaceAll(hook.PromptTemplate, "{{input}}", clipboardText)
-		result, err := o.Brain.GenerateString(o.Context, hook.PropertyName, prompt)
+	for _, promptConfig := range o.Config.PromptConfigs {
+		prompt := strings.ReplaceAll(promptConfig.PromptTemplate, "{{input}}", clipboardText)
+		result, err := o.Brain.GenerateString(o.Context, promptConfig.PropertyName, prompt)
 
 		if err != nil {
 			log.Println("Error generating:", err)
@@ -85,7 +63,8 @@ func (o *Orchestrator) GenerateForString(clipboardText string) {
 		} else {
 			log.Println("Generated:", result)
 			o.Out <- GenerationResult{
-				Text: result,
+				Text:         result,
+				PromptConfig: promptConfig,
 			}
 		}
 	}

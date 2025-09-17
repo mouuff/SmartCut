@@ -54,15 +54,22 @@ func (cmd *SmartCutCmd) Run() error {
 
 	o := orchestrator.NewOrchestrator(context.Background(), b, &config)
 
-	go o.Start()
 	go o.StartFeedFromClipboard()
 
 	a := app.New()
 	w := a.NewWindow("SmartCuts")
 
-	smartcutapp := smartcutapp.NewSmartCutApp(w, &config, o.Out)
+	smartcut := smartcutapp.NewSmartCutApp(w, &config)
 
-	w.SetContent(smartcutapp.Layout())
+	go func() {
+		for res := range o.Out {
+			fyne.Do(func() {
+				smartcut.UpdateItem(res)
+			})
+		}
+	}()
+
+	w.SetContent(smartcut.Layout())
 	w.Resize(fyne.NewSize(500, 400))
 	w.ShowAndRun()
 
@@ -72,8 +79,8 @@ func (cmd *SmartCutCmd) Run() error {
 func printConfigurationTemplate() {
 	configTemplate := &types.SmartCutConfig{
 		Model: "mistral",
-		Hooks: []*types.SmartCutHook{
-			&types.SmartCutHook{
+		PromptConfigs: []*types.PromptConfig{
+			&types.PromptConfig{
 				Title:          "Translate to French",
 				PropertyName:   "translated_text",
 				PromptTemplate: "Translate this to french: '{{input}}'",

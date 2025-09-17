@@ -20,14 +20,13 @@ type SmartCutApp struct {
 	listContainer *fyne.Container
 	window        fyne.Window
 
-	Ch     chan orchestrator.GenerationResult
 	Config *types.SmartCutConfig
 }
 
-func NewSmartCutApp(w fyne.Window, config *types.SmartCutConfig, ch chan orchestrator.GenerationResult) *SmartCutApp {
+func NewSmartCutApp(w fyne.Window, config *types.SmartCutConfig) *SmartCutApp {
 
 	items := make([]Item, 0)
-	for _, hook := range config.Hooks {
+	for _, hook := range config.PromptConfigs {
 		items = append(items, Item{
 			Title:   hook.Title,
 			Content: "Waiting for generation...",
@@ -38,7 +37,6 @@ func NewSmartCutApp(w fyne.Window, config *types.SmartCutConfig, ch chan orchest
 		items:         items,
 		listContainer: container.NewVBox(),
 		window:        w,
-		Ch:            ch,
 		Config:        config,
 	}
 
@@ -54,7 +52,7 @@ func (la *SmartCutApp) RefreshList() {
 	for _, item := range la.items {
 		title := widget.NewLabel(item.Title)
 		content := widget.NewLabel(item.Content)
-		button := widget.NewButton("Print", func(c string) func() {
+		button := widget.NewButton("Copy", func(c string) func() {
 			return func() {
 				fmt.Println(c)
 			}
@@ -67,6 +65,14 @@ func (la *SmartCutApp) RefreshList() {
 		la.listContainer.Add(row)
 	}
 	la.listContainer.Refresh()
+}
+
+// AddItem appends a new item and refreshes the view
+func (la *SmartCutApp) UpdateItem(result orchestrator.GenerationResult) {
+
+	fmt.Println("Updating item:", result.PromptConfig.Index, result.PromptConfig.Title, result.Text)
+	la.items[result.PromptConfig.Index].Content = result.Text
+	la.RefreshList()
 }
 
 // AddItem appends a new item and refreshes the view
