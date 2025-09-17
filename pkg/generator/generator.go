@@ -9,12 +9,12 @@ import (
 )
 
 type ResultsGeneratorImpl struct {
-	lastTextRead string
-	inputReader  types.InputReader
-	ch           chan types.GenerationResult
-	context      context.Context
-	brain        types.Brain
-	Config       *types.SmartCutConfig
+	lastInput   types.InputResult
+	inputReader types.InputReader
+	ch          chan types.GenerationResult
+	context     context.Context
+	brain       types.Brain
+	Config      *types.SmartCutConfig
 }
 
 func NewResultGenerator(
@@ -35,7 +35,7 @@ func (o *ResultsGeneratorImpl) Start() {
 	go func() {
 		// Listen to clipboard changes
 		for data := range o.inputReader.GetChannel() {
-			o.generateForString(data.Text)
+			o.generateForInput(data)
 		}
 
 		panic("unreachable")
@@ -47,29 +47,30 @@ func (o *ResultsGeneratorImpl) GetChannel() chan types.GenerationResult {
 }
 
 func (o *ResultsGeneratorImpl) ReGenerate() {
-	o.generateForString(o.lastTextRead)
+	o.generateForInput(o.lastInput)
 }
 
-func (o *ResultsGeneratorImpl) generateForString(data string) {
-	o.lastTextRead = data
+func (o *ResultsGeneratorImpl) generateForInput(input types.InputResult) {
+	o.lastInput = input
 
 	if o.Config.Debug {
-		log.Println("Clipboard changed:", data)
+		log.Println("Clipboard changed:", input.Text)
 	}
 
 	// For each prompt config, generate the result
 	for _, promptConfig := range o.Config.PromptConfigs {
-		go o.generateForPromptConfig(data, promptConfig)
+		go o.generateForPromptConfig(input, promptConfig)
 	}
 }
 
-func (o *ResultsGeneratorImpl) generateForPromptConfig(clipboardText string, promptConfig *types.PromptConfig) {
+func (o *ResultsGeneratorImpl) generateForPromptConfig(input types.InputResult, promptConfig *types.PromptConfig) {
 	o.ch <- types.GenerationResult{
 		Text:         "Generating...",
 		PromptConfig: promptConfig,
+		IsExplicit:   input.IsExplicit,
 	}
 
-	prompt := strings.ReplaceAll(promptConfig.PromptTemplate, "{{input}}", clipboardText)
+	prompt := strings.ReplaceAll(promptConfig.PromptTemplate, "{{input}}", input.Text)
 	result, err := o.brain.GenerateString(o.context, promptConfig.PropertyName, prompt)
 
 	if o.Config.Debug {
@@ -87,5 +88,6 @@ func (o *ResultsGeneratorImpl) generateForPromptConfig(clipboardText string, pro
 	o.ch <- types.GenerationResult{
 		Text:         result,
 		PromptConfig: promptConfig,
+		IsExplicit:   false,
 	}
 }

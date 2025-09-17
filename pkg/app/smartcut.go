@@ -102,6 +102,10 @@ func (sc *SmartCutApp) RefreshList() {
 func (la *SmartCutApp) UpdateItem(result types.GenerationResult) {
 	la.items[result.PromptConfig.Index].Content = result.Text
 	la.RefreshList()
+
+	if result.IsExplicit {
+		la.window.RequestFocus()
+	}
 }
 
 // Layout builds the full UI

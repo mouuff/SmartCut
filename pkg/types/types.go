@@ -25,6 +25,7 @@ type GenerationResult struct {
 	PromptConfig *PromptConfig
 	OriginalText string
 	Text         string
+	IsExplicit   bool
 }
 
 // InputResult represents the result of a user input
