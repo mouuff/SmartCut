@@ -46,17 +46,25 @@ func (o *ClipboardGenerator) Start() {
 
 	// Listen to clipboard changes
 	for data := range ch {
-
-		// For each prompt config, generate the result
-		for _, promptConfig := range o.Config.PromptConfigs {
-			go o.GenerateForPromptConfig(string(data), promptConfig)
-		}
+		o.GenerateForString(string(data))
 	}
 
 	panic("unreachable")
 }
 
+func (o *ClipboardGenerator) GenerateForString(data string) {
+	// For each prompt config, generate the result
+	for _, promptConfig := range o.Config.PromptConfigs {
+		go o.GenerateForPromptConfig(data, promptConfig)
+	}
+}
+
 func (o *ClipboardGenerator) GenerateForPromptConfig(clipboardText string, promptConfig *types.PromptConfig) {
+	o.Out <- GenerationResult{
+		Text:         "Generating...",
+		PromptConfig: promptConfig,
+	}
+
 	prompt := strings.ReplaceAll(promptConfig.PromptTemplate, "{{input}}", clipboardText)
 	result, err := o.Brain.GenerateString(o.Context, promptConfig.PropertyName, prompt)
 
