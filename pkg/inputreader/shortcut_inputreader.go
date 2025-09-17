@@ -77,8 +77,7 @@ func (s *ShortcutInputReader) Start() {
 		reghotkey := user32.MustFindProc("RegisterHotKey")
 		// Hotkeys to listen to:
 		keys := map[int16]*Hotkey{
-			1: {1, ModAlt + ModShift, 'O'}, // ALT+SHIFT+O
-			2: {2, ModAlt + ModCtrl, 'X'},  // ALT+CTRL+X
+			1: {1, ModAlt + ModShift, 'G'}, // ALT+SHIFT+G
 		}
 
 		// Register hotkeys:
