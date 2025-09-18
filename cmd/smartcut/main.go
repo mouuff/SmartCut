@@ -67,9 +67,9 @@ func (cmd *SmartCutCmd) Run() error {
 	ir := inputreader.NewShortcutInputReader()
 	ir.Start()
 
-	rg := controller.NewSmartCutController(context.Background(), b, v, config)
-	rg.ListenTo(ir)
-	rg.Init()
+	c := controller.NewSmartCutController(context.Background(), b, v, config)
+	c.Init()
+	c.ListenTo(ir)
 
 	w.SetContent(v.Layout())
 	w.Resize(fyne.NewSize(800, 400))

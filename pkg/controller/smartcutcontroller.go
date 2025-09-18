@@ -62,7 +62,7 @@ func (o *SmartCutController) ListenTo(inputReader types.InputReader) {
 
 func (o *SmartCutController) Init() {
 	o.view.OnAskGenerate = o.GenerateForInput
-	o.view.DoRefresh(o.model)
+	o.view.Refresh(o.model)
 }
 
 func (o *SmartCutController) UpdateItemContent(index int, content string) {
@@ -70,7 +70,7 @@ func (o *SmartCutController) UpdateItemContent(index int, content string) {
 	defer o.mu.Unlock()
 
 	o.model.ResultItems[index].Content = content
-	o.view.DoRefresh(o.model)
+	o.view.Refresh(o.model)
 }
 
 func (o *SmartCutController) GenerateForInput(input types.InputText) {

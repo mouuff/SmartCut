@@ -28,7 +28,7 @@ func NewSmartCutView(w fyne.Window) *SmartCutView {
 	return sc
 }
 
-func (sc *SmartCutView) DoRefresh(model *types.SmartCutModel) {
+func (sc *SmartCutView) Refresh(model *types.SmartCutModel) {
 	fyne.Do(func() {
 		sc.refreshListContainer(model)
 	})
