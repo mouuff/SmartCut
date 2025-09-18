@@ -7,22 +7,22 @@ import (
 	"github.com/mouuff/SmartCuts/pkg/types"
 )
 
-type SmartCutController struct {
+type SmartCutsController struct {
 	mu     sync.Mutex
 	ctx    context.Context
 	brain  types.Brain
-	config *types.SmartCutConfig
-	model  *types.SmartCutModel
+	config *types.SmartCutsConfig
+	model  *types.SmartCutsModel
 
 	OnRequestFocus func()
 }
 
-func NewSmartCutController(
+func NewSmartCutsController(
 	ctx context.Context,
 	brain types.Brain,
-	model *types.SmartCutModel,
-	config *types.SmartCutConfig) *SmartCutController {
-	return &SmartCutController{
+	model *types.SmartCutsModel,
+	config *types.SmartCutsConfig) *SmartCutsController {
+	return &SmartCutsController{
 		ctx:            ctx,
 		brain:          brain,
 		config:         config,
@@ -31,14 +31,14 @@ func NewSmartCutController(
 	}
 }
 
-func (o *SmartCutController) UpdateItemContent(index int, content string) {
+func (o *SmartCutsController) UpdateItemContent(index int, content string) {
 	o.mu.Lock()
 	defer o.mu.Unlock()
 
 	o.model.UpdateResultItem(index, content)
 }
 
-func (o *SmartCutController) GenerateForInput(input types.InputText) {
+func (o *SmartCutsController) GenerateForInput(input types.InputText) {
 	for i := range o.config.PromptConfigs {
 		o.UpdateItemContent(i, "Generating...")
 	}
@@ -54,7 +54,7 @@ func (o *SmartCutController) GenerateForInput(input types.InputText) {
 	}
 }
 
-func (o *SmartCutController) generateItemContent(index int, propertyName, prompt string) {
+func (o *SmartCutsController) generateItemContent(index int, propertyName, prompt string) {
 	result, err := o.brain.GenerateString(o.ctx, propertyName, prompt)
 
 	if err != nil {

@@ -12,15 +12,15 @@ import (
 	"golang.design/x/clipboard"
 )
 
-type SmartCutView struct {
+type SmartsCutView struct {
 	window            fyne.Window
 	listContainer     *fyne.Container
-	model             *types.SmartCutModel
+	model             *types.SmartCutsModel
 	OnRequestGenerate func(types.InputText)
 }
 
-func NewSmartCutView(w fyne.Window, m *types.SmartCutModel) *SmartCutView {
-	sc := &SmartCutView{
+func NewSmartsCutView(w fyne.Window, m *types.SmartCutsModel) *SmartsCutView {
+	sc := &SmartsCutView{
 		listContainer:     container.NewVBox(),
 		window:            w,
 		model:             m,
@@ -32,19 +32,19 @@ func NewSmartCutView(w fyne.Window, m *types.SmartCutModel) *SmartCutView {
 	return sc
 }
 
-func (sc *SmartCutView) Refresh() {
+func (sc *SmartsCutView) Refresh() {
 	fyne.Do(func() {
 		sc.refreshListResults()
 	})
 }
 
-func (sc *SmartCutView) RequestFocus() {
+func (sc *SmartsCutView) RequestFocus() {
 	fyne.Do(func() {
 		sc.window.RequestFocus()
 	})
 }
 
-func (sc *SmartCutView) refreshListResults() {
+func (sc *SmartsCutView) refreshListResults() {
 	sc.listContainer.Objects = nil
 	for _, item := range sc.model.ResultItems() {
 		title := widget.NewLabelWithStyle(item.Title, fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
@@ -81,7 +81,7 @@ func (sc *SmartCutView) refreshListResults() {
 	sc.listContainer.Refresh()
 }
 
-func (sc *SmartCutView) Layout() fyne.CanvasObject {
+func (sc *SmartsCutView) Layout() fyne.CanvasObject {
 	addBtn := widget.NewButton("Generate from clipboard", func() {
 		sc.OnRequestGenerate(types.InputText{
 			Text:       string(clipboard.Read(clipboard.FmtText)),
@@ -95,7 +95,7 @@ func (sc *SmartCutView) Layout() fyne.CanvasObject {
 			fyne.NewMenuItem("Help", func() {
 				helpmsg := "Shortcut for processing the current clipboard: Alt+Shift+G\nConfiguration file: {{configpath}}"
 				helpmsg = strings.ReplaceAll(helpmsg, "{{configpath}}", sc.model.Config().ConfigPath)
-				dialog.ShowInformation("About SmartCut", helpmsg, sc.window)
+				dialog.ShowInformation("About SmartCuts", helpmsg, sc.window)
 			}),
 			fyne.NewMenuItem("Configure", func() {
 				utils.OpenFile(sc.model.Config().ConfigPath)

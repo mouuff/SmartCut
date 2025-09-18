@@ -22,9 +22,9 @@ import (
 	"golang.design/x/clipboard"
 )
 
-const SmartCutVersion string = "1.0.0"
+const SmartCutsVersion string = "1.0.0"
 
-type SmartCutCmd struct {
+type SmartCutsCmd struct {
 	flagSet *flag.FlagSet
 
 	config string
@@ -36,8 +36,8 @@ func selfUpdate() {
 			RepositoryURL: "github.com/mouuff/SmartCuts",
 			ArchiveName:   fmt.Sprintf("binaries_%s.zip", runtime.GOOS),
 		},
-		ExecutableName: fmt.Sprintf("smartcut_%s_%s", runtime.GOOS, runtime.GOARCH),
-		Version:        SmartCutVersion,
+		ExecutableName: fmt.Sprintf("smartcuts_%s_%s", runtime.GOOS, runtime.GOARCH),
+		Version:        SmartCutsVersion,
 	}
 
 	if _, err := u.Update(); err != nil {
@@ -46,14 +46,14 @@ func selfUpdate() {
 }
 
 // Init initializes the command
-func (cmd *SmartCutCmd) Init(args []string) error {
-	cmd.flagSet = flag.NewFlagSet("smartcut", flag.ExitOnError)
+func (cmd *SmartCutsCmd) Init(args []string) error {
+	cmd.flagSet = flag.NewFlagSet("smartcuts", flag.ExitOnError)
 	cmd.flagSet.StringVar(&cmd.config, "config", "", "configuration file override")
 	return cmd.flagSet.Parse(args)
 }
 
 // Run runs the command
-func (cmd *SmartCutCmd) Run(a fyne.App, w fyne.Window) error {
+func (cmd *SmartCutsCmd) Run(a fyne.App, w fyne.Window) error {
 	config, err := utils.GetOrCreateConfiguration(cmd.config)
 	if err != nil {
 		return err
@@ -74,9 +74,9 @@ func (cmd *SmartCutCmd) Run(a fyne.App, w fyne.Window) error {
 	ir.Start()
 
 	// MVC setup
-	m := types.NewSmartCutModel(config)
-	v := view.NewSmartCutView(w, m)
-	c := controller.NewSmartCutController(context.Background(), b, m, config)
+	m := types.NewSmartCutsModel(config)
+	v := view.NewSmartsCutView(w, m)
+	c := controller.NewSmartCutsController(context.Background(), b, m, config)
 
 	// Setup View / Controller hooks
 	ir.OnInput = c.GenerateForInput
@@ -88,14 +88,14 @@ func (cmd *SmartCutCmd) Run(a fyne.App, w fyne.Window) error {
 }
 
 func main() {
-	cmd := &SmartCutCmd{}
+	cmd := &SmartCutsCmd{}
 	err := cmd.Init(os.Args[1:])
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	a := app.NewWithID("com.mouuff.smartcut")
-	w := a.NewWindow("SmartCuts - " + SmartCutVersion)
+	a := app.NewWithID("com.mouuff.smartcuts")
+	w := a.NewWindow("SmartCuts - " + SmartCutsVersion)
 	w.Resize(fyne.NewSize(800, 400))
 	err = cmd.Run(a, w)
 

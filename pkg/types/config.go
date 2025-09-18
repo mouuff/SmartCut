@@ -9,8 +9,8 @@ type PromptConfig struct {
 	PropertyName   string
 }
 
-// SmartCutConfig represents the overall configuration for SmartCut
-type SmartCutConfig struct {
+// SmartCutsConfig represents the overall configuration for SmartCut
+type SmartCutsConfig struct {
 	ConfigPath     string `json:"-"`
 	HostUrl        string
 	Model          string
