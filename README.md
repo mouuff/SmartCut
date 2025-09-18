@@ -1,6 +1,6 @@
 # SmartCut
 
-SmartCut is an application designed to facilitate the creation and invocation of pre-defined prompt sequences through the use of custom shortcuts.
+This application designed to facilitate the invocation of pre-defined prompt sequences through shortcuts.
 
 I created this project because I frequently reuse the same prompts throughout my day-for rewriting messages, adjusting email tone, or rephrasing content. The goal is to cut down on repetitive steps and make the process faster and easier.
 
@@ -23,11 +23,7 @@ Before using SmartCut, ensure you have the following installed:
 
 - **Ollama**: Download and install Ollama from [Ollama's website](https://ollama.com/).
 
-To run Ollama in server mode, use the following command:
-
-```sh
-ollama serve
-```
+Make sure Ollama is running in the background before starting SmartCut.
 
 ### Setup
 
