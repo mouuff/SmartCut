@@ -36,3 +36,25 @@ Go to the [SmartCut releases](https://github.com/mouuff/SmartCut/releases) page.
 Download the latest binaries zip (*.zip).
 
 Extract the zip and run the SmartCut binary - it should work out of the box.
+
+## Building locally (section for developers)
+
+### Prerequisites
+
+Before building SmartCut, ensure you have the following installed:
+
+- **Golang**: Download and install Golang from [the official website](https://golang.org/dl/).
+- **Fyne**: Download and install Fyne from [Fyne's website](https://docs.fyne.io/started/).
+- **Ollama**: Download and install Ollama from [Ollama's website](https://ollama.com/).
+
+### Running from sources
+
+`go run main.go`
+
+### Building
+
+`go build -ldflags -H=windowsgui cmd/smartcut/main.go`
+
+### Packaging
+
+`fyne package -app-id com.mouuff.smartcut -os windows -icon images/icon.png -release`
