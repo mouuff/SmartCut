@@ -1,4 +1,6 @@
 
+# fyne package -app-id com.mouuff.smartcut -os windows -icon images/icon.png -release
+
 binary_name=smartcut_windows_amd64.exe
 zip_name=binaries_windows.zip
 go build -ldflags -H=windowsgui cmd/smartcut/main.go

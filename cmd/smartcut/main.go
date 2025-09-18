@@ -22,7 +22,7 @@ import (
 	"golang.design/x/clipboard"
 )
 
-const SmartCutVersion string = "v0.0.3"
+const SmartCutVersion string = "1.0.0"
 
 type SmartCutCmd struct {
 	flagSet *flag.FlagSet
