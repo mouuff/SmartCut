@@ -7,19 +7,19 @@ import (
 	"golang.design/x/clipboard"
 )
 
-type ClipboardInputReader struct {
+type ClipboardReader struct {
 	ctx     context.Context
 	OnInput func(types.InputText)
 }
 
-func NewClipboardInputReader(ctx context.Context) *ClipboardInputReader {
-	return &ClipboardInputReader{
+func NewClipboardReader(ctx context.Context) *ClipboardReader {
+	return &ClipboardReader{
 		ctx:     ctx,
 		OnInput: func(types.InputText) {},
 	}
 }
 
-func (c *ClipboardInputReader) Start() {
+func (c *ClipboardReader) Start() {
 
 	clipch := clipboard.Watch(c.ctx, clipboard.FmtText)
 

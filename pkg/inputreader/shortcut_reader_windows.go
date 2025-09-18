@@ -51,17 +51,17 @@ func (h *Hotkey) String() string {
 	return fmt.Sprintf("Hotkey[Id: %d, %s%c]", h.Id, mod, h.KeyCode)
 }
 
-type ShortcutInputReader struct {
+type ShortcutReader struct {
 	OnInput func(types.InputText)
 }
 
-func NewShortcutInputReader() *ShortcutInputReader {
-	return &ShortcutInputReader{
+func NewShortcutReader() *ShortcutReader {
+	return &ShortcutReader{
 		OnInput: func(types.InputText) {},
 	}
 }
 
-func (s *ShortcutInputReader) Start() {
+func (s *ShortcutReader) Start() {
 	go func() {
 		user32 := syscall.MustLoadDLL("user32")
 

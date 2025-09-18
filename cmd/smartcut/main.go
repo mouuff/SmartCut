@@ -54,15 +54,10 @@ func (cmd *SmartCutCmd) Init(args []string) error {
 
 // Run runs the command
 func (cmd *SmartCutCmd) Run(a fyne.App, w fyne.Window) error {
-
 	config, err := utils.GetOrCreateConfiguration(cmd.config)
 	if err != nil {
 		return err
 	}
-
-	m := types.NewSmartCutModel(config)
-	v := view.NewSmartCutView(w, m)
-	w.SetContent(v.Layout())
 
 	b, err := brain.NewOllamaBrain(config.HostUrl, config.Model)
 	if err != nil {
@@ -74,10 +69,13 @@ func (cmd *SmartCutCmd) Run(a fyne.App, w fyne.Window) error {
 		return err
 	}
 
-	// ir := inputreader.NewClipboardInputReader(ctx.Background())
-	ir := inputreader.NewShortcutInputReader()
+	// ir := inputreader.NewClipboardReader(ctx.Background())
+	ir := inputreader.NewShortcutReader()
 	ir.Start()
 
+	// MVC setup
+	m := types.NewSmartCutModel(config)
+	v := view.NewSmartCutView(w, m)
 	c := controller.NewSmartCutController(context.Background(), b, m, config)
 
 	// Setup View / Controller hooks
@@ -85,6 +83,7 @@ func (cmd *SmartCutCmd) Run(a fyne.App, w fyne.Window) error {
 	v.OnRequestGenerate = c.GenerateForInput
 	c.OnRequestFocus = v.RequestFocus
 
+	w.SetContent(v.Layout())
 	return nil
 }
 
