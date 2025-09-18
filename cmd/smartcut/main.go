@@ -27,47 +27,37 @@ const SmartCutVersion string = "v0.0.3"
 type SmartCutCmd struct {
 	flagSet *flag.FlagSet
 
-	config   string
-	printBin bool
+	config string
 }
 
 // Init initializes the command
 func (cmd *SmartCutCmd) Init(args []string) error {
 	cmd.flagSet = flag.NewFlagSet("smartcut", flag.ExitOnError)
 	cmd.flagSet.StringVar(&cmd.config, "config", "", "configuration file override")
-	cmd.flagSet.BoolVar(&cmd.printBin, "printBin", false, "prints the expected binary name")
 	return cmd.flagSet.Parse(args)
 }
 
 // Run runs the command
-func (cmd *SmartCutCmd) Run(a fyne.App, w fyne.Window) {
-	if cmd.printBin {
-		fmt.Printf("smartcut_%s_%s\n", runtime.GOOS, runtime.GOARCH)
-		return
-	}
-
+func (cmd *SmartCutCmd) Run(a fyne.App, w fyne.Window) error {
 	m := types.NewSmartCutModel()
 	v := view.NewSmartCutView(w, m)
 	w.SetContent(v.Layout())
 
 	config, err := utils.GetOrCreateConfiguration(cmd.config)
 	if err != nil {
-		dialog.ShowError(err, w)
-		return
+		return err
 	}
 
 	m.UpdateFromConfig(config)
 
 	b, err := brain.NewOllamaBrain(config.HostUrl, config.Model)
 	if err != nil {
-		dialog.ShowError(err, w)
-		return
+		return err
 	}
 
 	err = clipboard.Init()
 	if err != nil {
-		dialog.ShowError(err, w)
-		return
+		return err
 	}
 
 	// ir := inputreader.NewClipboardInputReader(ctx.Background())
@@ -93,6 +83,8 @@ func (cmd *SmartCutCmd) Run(a fyne.App, w fyne.Window) {
 	if _, err := u.Update(); err != nil {
 		log.Println(err)
 	}
+
+	return nil
 }
 
 func main() {
@@ -105,6 +97,11 @@ func main() {
 	a := app.New()
 	w := a.NewWindow("SmartCuts - " + SmartCutVersion)
 	w.Resize(fyne.NewSize(800, 400))
-	cmd.Run(a, w)
+	err = cmd.Run(a, w)
+
+	if err != nil {
+		dialog.ShowError(err, w)
+	}
+
 	w.ShowAndRun()
 }

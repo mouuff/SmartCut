@@ -78,13 +78,14 @@ func GetOrCreateConfiguration(configPath string) (*types.SmartCutConfig, error) 
 		if err != nil {
 			return nil, fmt.Errorf("could not create default config file: %w", err)
 		}
+
 		log.Printf("Created default config file at %s\n", configPath)
 	}
 
 	var config types.SmartCutConfig
 	err = ReadFromJson(configPath, &config)
 	if err != nil {
-		return nil, fmt.Errorf("could not read config at: %w", err)
+		return nil, fmt.Errorf("could not read config at %s: %w", configPath, err)
 	}
 
 	// Sets the config path
