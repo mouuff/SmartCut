@@ -33,17 +33,6 @@ func NewSmartCutController(
 	}
 }
 
-func (o *SmartCutController) ListenTo(inputReader types.InputReader) {
-	go func() {
-		// Listen to clipboard changes
-		for data := range inputReader.GetChannel() {
-			o.GenerateForInput(data)
-		}
-
-		panic("unreachable")
-	}()
-}
-
 func (o *SmartCutController) UpdateItemContent(index int, content string) {
 	o.mu.Lock()
 	defer o.mu.Unlock()

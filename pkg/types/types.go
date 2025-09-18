@@ -30,7 +30,3 @@ type InputText struct {
 type Brain interface {
 	GenerateString(ctx context.Context, propertyName, prompt string) (string, error)
 }
-
-type InputReader interface {
-	GetChannel() chan InputText
-}

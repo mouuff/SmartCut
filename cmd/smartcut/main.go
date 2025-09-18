@@ -74,10 +74,9 @@ func (cmd *SmartCutCmd) Run() error {
 	c := controller.NewSmartCutController(context.Background(), b, m, config)
 
 	// Setup View / Controller hooks
-	v.OnAskGenerate = c.GenerateForInput
+	ir.OnInput = c.GenerateForInput
+	v.OnRequestGenerate = c.GenerateForInput
 	c.OnRequestFocus = v.RequestFocus
-
-	c.ListenTo(ir)
 
 	w.SetContent(v.Layout())
 	w.Resize(fyne.NewSize(800, 400))

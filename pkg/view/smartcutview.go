@@ -13,19 +13,19 @@ import (
 )
 
 type SmartCutView struct {
-	listContainer *fyne.Container
-	window        fyne.Window
-	OnAskGenerate func(types.InputText)
+	listContainer     *fyne.Container
+	window            fyne.Window
+	OnRequestGenerate func(types.InputText)
 
 	model *types.SmartCutModel
 }
 
 func NewSmartCutView(w fyne.Window, m *types.SmartCutModel) *SmartCutView {
 	sc := &SmartCutView{
-		listContainer: container.NewVBox(),
-		window:        w,
-		model:         m,
-		OnAskGenerate: func(types.InputText) {},
+		listContainer:     container.NewVBox(),
+		window:            w,
+		model:             m,
+		OnRequestGenerate: func(types.InputText) {},
 	}
 
 	m.OnChanged = sc.Refresh
@@ -83,7 +83,7 @@ func (sc *SmartCutView) refreshListContainer() {
 
 func (sc *SmartCutView) Layout() fyne.CanvasObject {
 	addBtn := widget.NewButton("Generate from clipboard", func() {
-		sc.OnAskGenerate(types.InputText{
+		sc.OnRequestGenerate(types.InputText{
 			Text:       string(clipboard.Read(clipboard.FmtText)),
 			IsExplicit: true,
 		})

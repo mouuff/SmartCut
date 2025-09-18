@@ -52,17 +52,13 @@ func (h *Hotkey) String() string {
 }
 
 type ShortcutInputReader struct {
-	ch chan types.InputText
+	OnInput func(types.InputText)
 }
 
 func NewShortcutInputReader() *ShortcutInputReader {
 	return &ShortcutInputReader{
-		ch: make(chan types.InputText),
+		OnInput: func(types.InputText) {},
 	}
-}
-
-func (s *ShortcutInputReader) GetChannel() chan types.InputText {
-	return s.ch
 }
 
 func (s *ShortcutInputReader) Start() {
@@ -100,10 +96,10 @@ func (s *ShortcutInputReader) Start() {
 					rawclip := clipboard.Read(clipboard.FmtText)
 
 					if rawclip != nil {
-						s.ch <- types.InputText{
+						s.OnInput(types.InputText{
 							Text:       string(rawclip),
 							IsExplicit: true,
-						}
+						})
 					}
 				}
 			}
