@@ -69,6 +69,7 @@ func (cmd *SmartCutCmd) Run() error {
 	smartcut := smartcutapp.NewSmartCutApp(w)
 
 	rg := generator.NewSmartCutMainController(context.Background(), b, smartcut, config)
+	smartcut.OnAskGenerate = rg.GenerateForInput
 	rg.ListenTo(ir)
 	rg.RefreshView()
 

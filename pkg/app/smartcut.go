@@ -15,14 +15,14 @@ import (
 type SmartCutApp struct {
 	listContainer *fyne.Container
 	window        fyne.Window
-	OnAskGenerate func()
+	OnAskGenerate func(types.InputResult)
 }
 
 func NewSmartCutApp(w fyne.Window) *SmartCutApp {
 	sc := &SmartCutApp{
 		listContainer: container.NewVBox(),
 		window:        w,
-		OnAskGenerate: func() {},
+		OnAskGenerate: func(types.InputResult) {},
 	}
 
 	return sc
@@ -79,7 +79,10 @@ func (sc *SmartCutApp) refreshListContainer(model *types.SmartCutModel) {
 
 func (sc *SmartCutApp) Layout() fyne.CanvasObject {
 	addBtn := widget.NewButton("Generate from clipboard", func() {
-		sc.OnAskGenerate()
+		sc.OnAskGenerate(types.InputResult{
+			Text:       string(clipboard.Read(clipboard.FmtText)),
+			IsExplicit: true,
+		})
 	})
 
 	helpmsg := `Shortcut for processing the current clipboard: Alt+Shift+G
