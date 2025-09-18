@@ -15,19 +15,14 @@ I created this project because I frequently reuse the same prompts throughout my
 
 ### Prerequisites
 
-Before using SmartCut, ensure you have the following installed:
-
-- **Ollama**: Download and install Ollama from [Ollama's website](https://ollama.com/).
-
-Make sure Ollama is running in the background before starting SmartCut.
+- **Ollama** – Install from [Ollama's website](https://ollama.com/).  
+- Make sure Ollama is running before starting SmartCut.
 
 ### Setup
 
-Go to the [SmartCut releases](https://github.com/mouuff/SmartCut/releases) page.
-
-Download the latest binaries zip (*.zip).
-
-Extract the zip and run the SmartCut binary - it should work out of the box.
+1. Go to the [SmartCut releases page](https://github.com/mouuff/SmartCut/releases).  
+2. Download and extract the latest zip.  
+3. Run the SmartCut binary - it works out of the box.
 
 ## Example usage
 
