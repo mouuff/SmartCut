@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -73,7 +74,7 @@ func GetOrCreateConfiguration(configPath string) (*types.SmartCutConfig, error) 
 		if err != nil {
 			return nil, fmt.Errorf("could not create default config file: %w", err)
 		}
-		fmt.Printf("Created default config file at %s\n", configPath)
+		log.Printf("Created default config file at %s\n", configPath)
 	}
 
 	var config types.SmartCutConfig
@@ -81,6 +82,9 @@ func GetOrCreateConfiguration(configPath string) (*types.SmartCutConfig, error) 
 	if err != nil {
 		return nil, fmt.Errorf("could not read config at: %w", err)
 	}
+
+	// Sets the config path
+	config.ConfigPath = configPath
 
 	return &config, nil
 }

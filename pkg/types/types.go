@@ -13,6 +13,7 @@ type PromptConfig struct {
 
 // SmartCutConfig represents the overall configuration for SmartCut
 type SmartCutConfig struct {
+	ConfigPath     string `json:"-"`
 	HostUrl        string
 	Model          string
 	MinRowsVisible int
