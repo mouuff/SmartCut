@@ -13,6 +13,7 @@ import (
 	"github.com/mouuff/SmartCuts/pkg/brain"
 	"github.com/mouuff/SmartCuts/pkg/controller"
 	"github.com/mouuff/SmartCuts/pkg/inputreader"
+	"github.com/mouuff/SmartCuts/pkg/types"
 	"github.com/mouuff/SmartCuts/pkg/utils"
 	"github.com/mouuff/SmartCuts/pkg/view"
 	"github.com/mouuff/go-rocket-update/pkg/provider"
@@ -44,14 +45,17 @@ func (cmd *SmartCutCmd) Run() error {
 		return nil
 	}
 
+	m := types.NewSmartCutModel()
 	a := app.New()
 	w := a.NewWindow("SmartCuts - " + SmartCutVersion)
-	v := view.NewSmartCutView(w)
+	v := view.NewSmartCutView(w, m)
 
 	config, err := utils.GetOrCreateConfiguration(cmd.config)
 	if err != nil {
 		return err
 	}
+
+	m.UpdateFromConfig(config)
 
 	b, err := brain.NewOllamaBrain(config.HostUrl, config.Model)
 	if err != nil {
@@ -67,8 +71,12 @@ func (cmd *SmartCutCmd) Run() error {
 	ir := inputreader.NewShortcutInputReader()
 	ir.Start()
 
-	c := controller.NewSmartCutController(context.Background(), b, v, config)
-	c.Init()
+	c := controller.NewSmartCutController(context.Background(), b, m, config)
+
+	// Setup MVC hooks
+	v.OnAskGenerate = c.GenerateForInput
+	c.OnRequestFocus = v.RequestFocus
+
 	c.ListenTo(ir)
 
 	w.SetContent(v.Layout())

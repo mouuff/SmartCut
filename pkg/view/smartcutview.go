@@ -16,21 +16,25 @@ type SmartCutView struct {
 	listContainer *fyne.Container
 	window        fyne.Window
 	OnAskGenerate func(types.InputText)
+
+	model *types.SmartCutModel
 }
 
-func NewSmartCutView(w fyne.Window) *SmartCutView {
+func NewSmartCutView(w fyne.Window, m *types.SmartCutModel) *SmartCutView {
 	sc := &SmartCutView{
 		listContainer: container.NewVBox(),
 		window:        w,
+		model:         m,
 		OnAskGenerate: func(types.InputText) {},
 	}
 
+	m.OnChanged = sc.Refresh
 	return sc
 }
 
-func (sc *SmartCutView) Refresh(model *types.SmartCutModel) {
+func (sc *SmartCutView) Refresh() {
 	fyne.Do(func() {
-		sc.refreshListContainer(model)
+		sc.refreshListContainer()
 	})
 }
 
@@ -40,9 +44,9 @@ func (sc *SmartCutView) RequestFocus() {
 	})
 }
 
-func (sc *SmartCutView) refreshListContainer(model *types.SmartCutModel) {
+func (sc *SmartCutView) refreshListContainer() {
 	sc.listContainer.Objects = nil
-	for _, item := range model.ResultItems {
+	for _, item := range sc.model.ResultItems() {
 		title := widget.NewLabelWithStyle(item.Title, fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
 
 		// Multiline selectable Entry, but locked to read-only
@@ -54,7 +58,7 @@ func (sc *SmartCutView) refreshListContainer(model *types.SmartCutModel) {
 			// Reset text if user tries to type
 			content.SetText(item.Content)
 		}
-		content.SetMinRowsVisible(model.MinRowsVisible)
+		content.SetMinRowsVisible(sc.model.MinRowsVisible())
 
 		// Let content expand horizontally
 		contentContainer := container.NewStack(content)

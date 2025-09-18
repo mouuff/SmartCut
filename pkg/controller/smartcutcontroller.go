@@ -7,7 +7,6 @@ import (
 	"sync"
 
 	"github.com/mouuff/SmartCuts/pkg/types"
-	"github.com/mouuff/SmartCuts/pkg/view"
 )
 
 type SmartCutController struct {
@@ -15,37 +14,22 @@ type SmartCutController struct {
 	context context.Context
 	brain   types.Brain
 	config  *types.SmartCutConfig
-	view    *view.SmartCutView
 	model   *types.SmartCutModel
-}
 
-func getModelForConfig(config *types.SmartCutConfig) *types.SmartCutModel {
-	model := &types.SmartCutModel{
-		MinRowsVisible: config.MinRowsVisible,
-		ResultItems:    make([]types.ResultItem, 0),
-	}
-
-	for _, promptConfig := range config.PromptConfigs {
-		model.ResultItems = append(model.ResultItems, types.ResultItem{
-			Title:   promptConfig.Title,
-			Content: "Waiting for generation...",
-		})
-	}
-
-	return model
+	OnRequestFocus func()
 }
 
 func NewSmartCutController(
 	context context.Context,
 	brain types.Brain,
-	view *view.SmartCutView,
+	model *types.SmartCutModel,
 	config *types.SmartCutConfig) *SmartCutController {
 	return &SmartCutController{
-		context: context,
-		brain:   brain,
-		config:  config,
-		view:    view,
-		model:   getModelForConfig(config),
+		context:        context,
+		brain:          brain,
+		config:         config,
+		model:          model,
+		OnRequestFocus: func() {},
 	}
 }
 
@@ -60,17 +44,11 @@ func (o *SmartCutController) ListenTo(inputReader types.InputReader) {
 	}()
 }
 
-func (o *SmartCutController) Init() {
-	o.view.OnAskGenerate = o.GenerateForInput
-	o.view.Refresh(o.model)
-}
-
 func (o *SmartCutController) UpdateItemContent(index int, content string) {
 	o.mu.Lock()
 	defer o.mu.Unlock()
 
-	o.model.ResultItems[index].Content = content
-	o.view.Refresh(o.model)
+	o.model.UpdateResultItem(index, content)
 }
 
 func (o *SmartCutController) GenerateForInput(input types.InputText) {
@@ -83,7 +61,7 @@ func (o *SmartCutController) GenerateForInput(input types.InputText) {
 	}
 
 	if input.IsExplicit {
-		o.view.RequestFocus()
+		o.OnRequestFocus()
 	}
 
 	// For each prompt config, generate the result
