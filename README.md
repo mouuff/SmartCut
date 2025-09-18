@@ -7,7 +7,7 @@ I created this project because I frequently reuse the same prompts throughout my
 ## Features
 - **Custom Prompts** – Create and manage your own prompt workflows.  
 - **Flexible Model Choice** – Connect to the AI model of your preference.  
-- **Quick Shortcuts** – Instantly run SmartCut on your clipboard with `Alt + Shift + G` (G for *Generate*).  
+- **Quick Shortcuts** – Instantly run SmartCut on your clipboard with `Alt + Shift + G` (G stands for *Generate*).  
 - **Always Up to Date** – SmartCut updates automatically.  
 - **Local or Remote** – Works with both locally hosted and remote LLMs.  
 
