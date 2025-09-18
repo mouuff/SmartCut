@@ -11,10 +11,6 @@ I created this project because I frequently reuse the same prompts throughout my
 - **Always Up to Date** – SmartCut updates automatically.  
 - **Local or Remote** – Works with both locally hosted and remote LLMs.  
 
-## Example usage
-
-![Demo](images/demo.png)
-
 ## Installation
 
 ### Prerequisites
@@ -32,6 +28,10 @@ Go to the [SmartCut releases](https://github.com/mouuff/SmartCut/releases) page.
 Download the latest binaries zip (*.zip).
 
 Extract the zip and run the SmartCut binary - it should work out of the box.
+
+## Example usage
+
+![Demo](images/demo.png)
 
 ## Building locally (section for developers)
 
