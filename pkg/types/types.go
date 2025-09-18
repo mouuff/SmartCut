@@ -4,23 +4,6 @@ import (
 	"context"
 )
 
-// PromptConfig represents a single prompt configuration
-type PromptConfig struct {
-	Title          string
-	PromptTemplate string
-	PropertyName   string
-}
-
-// SmartCutConfig represents the overall configuration for SmartCut
-type SmartCutConfig struct {
-	ConfigPath     string `json:"-"`
-	HostUrl        string
-	Model          string
-	MinRowsVisible int
-	Debug          bool
-	PromptConfigs  []*PromptConfig
-}
-
 // InputText represents the result of a user input
 type InputText struct {
 	IsExplicit bool
