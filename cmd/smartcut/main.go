@@ -54,16 +54,15 @@ func (cmd *SmartCutCmd) Init(args []string) error {
 
 // Run runs the command
 func (cmd *SmartCutCmd) Run(a fyne.App, w fyne.Window) error {
-	m := types.NewSmartCutModel()
-	v := view.NewSmartCutView(w, m)
-	w.SetContent(v.Layout())
 
 	config, err := utils.GetOrCreateConfiguration(cmd.config)
 	if err != nil {
 		return err
 	}
 
-	m.UpdateFromConfig(config)
+	m := types.NewSmartCutModel(config)
+	v := view.NewSmartCutView(w, m)
+	w.SetContent(v.Layout())
 
 	b, err := brain.NewOllamaBrain(config.HostUrl, config.Model)
 	if err != nil {

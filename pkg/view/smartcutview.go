@@ -13,11 +13,10 @@ import (
 )
 
 type SmartCutView struct {
-	listContainer     *fyne.Container
 	window            fyne.Window
+	listContainer     *fyne.Container
+	model             *types.SmartCutModel
 	OnRequestGenerate func(types.InputText)
-
-	model *types.SmartCutModel
 }
 
 func NewSmartCutView(w fyne.Window, m *types.SmartCutModel) *SmartCutView {
@@ -29,6 +28,7 @@ func NewSmartCutView(w fyne.Window, m *types.SmartCutModel) *SmartCutView {
 	}
 
 	m.OnChanged = sc.Refresh
+	sc.refreshListContainer()
 	return sc
 }
 
@@ -58,7 +58,7 @@ func (sc *SmartCutView) refreshListContainer() {
 			// Reset text if user tries to type
 			content.SetText(item.Content)
 		}
-		content.SetMinRowsVisible(sc.model.MinRowsVisible())
+		content.SetMinRowsVisible(sc.model.Config().MinRowsVisible)
 
 		// Let content expand horizontally
 		contentContainer := container.NewStack(content)
@@ -94,11 +94,11 @@ func (sc *SmartCutView) Layout() fyne.CanvasObject {
 		fyne.NewMenu("Menu",
 			fyne.NewMenuItem("Help", func() {
 				helpmsg := "Shortcut for processing the current clipboard: Alt+Shift+G\nConfiguration file: {{configpath}}"
-				helpmsg = strings.ReplaceAll(helpmsg, "{{configpath}}", sc.model.ConfigPath())
+				helpmsg = strings.ReplaceAll(helpmsg, "{{configpath}}", sc.model.Config().ConfigPath)
 				dialog.ShowInformation("About SmartCut", helpmsg, sc.window)
 			}),
 			fyne.NewMenuItem("Configure", func() {
-				utils.OpenFile(sc.model.ConfigPath())
+				utils.OpenFile(sc.model.Config().ConfigPath)
 				dialog.ShowInformation("Warning", "You must restart the application to apply configuration changes", sc.window)
 			}),
 		),

@@ -40,7 +40,7 @@ func GetDefaultConfiguration() *types.SmartCutConfig {
 		HostUrl:        "default",
 		Model:          "llama3.2",
 		MinRowsVisible: 7,
-		PromptConfigs: []*types.PromptConfig{
+		PromptConfigs: []types.PromptConfig{
 			{
 				Title:          "Rewrite formally",
 				PromptTemplate: "Rewrite this formally: '{{input}}'",

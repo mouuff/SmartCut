@@ -16,7 +16,7 @@ type SmartCutConfig struct {
 	Model          string
 	MinRowsVisible int
 	Debug          bool
-	PromptConfigs  []*PromptConfig
+	PromptConfigs  []PromptConfig
 }
 
 func (c *PromptConfig) GetPrompt(input string) string {
