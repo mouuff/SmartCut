@@ -10,6 +10,7 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/dialog"
 	"github.com/mouuff/SmartCuts/pkg/brain"
 	"github.com/mouuff/SmartCuts/pkg/controller"
 	"github.com/mouuff/SmartCuts/pkg/inputreader"
@@ -39,32 +40,34 @@ func (cmd *SmartCutCmd) Init(args []string) error {
 }
 
 // Run runs the command
-func (cmd *SmartCutCmd) Run() error {
+func (cmd *SmartCutCmd) Run(a fyne.App, w fyne.Window) {
 	if cmd.printBin {
 		fmt.Printf("smartcut_%s_%s\n", runtime.GOOS, runtime.GOARCH)
-		return nil
+		return
 	}
 
 	m := types.NewSmartCutModel()
-	a := app.New()
-	w := a.NewWindow("SmartCuts - " + SmartCutVersion)
 	v := view.NewSmartCutView(w, m)
+	w.SetContent(v.Layout())
 
 	config, err := utils.GetOrCreateConfiguration(cmd.config)
 	if err != nil {
-		return err
+		dialog.ShowError(err, w)
+		return
 	}
 
 	m.UpdateFromConfig(config)
 
 	b, err := brain.NewOllamaBrain(config.HostUrl, config.Model)
 	if err != nil {
-		panic(err)
+		dialog.ShowError(err, w)
+		return
 	}
 
 	err = clipboard.Init()
 	if err != nil {
-		panic(err)
+		dialog.ShowError(err, w)
+		return
 	}
 
 	// ir := inputreader.NewClipboardInputReader(ctx.Background())
@@ -78,10 +81,6 @@ func (cmd *SmartCutCmd) Run() error {
 	v.OnRequestGenerate = c.GenerateForInput
 	c.OnRequestFocus = v.RequestFocus
 
-	w.SetContent(v.Layout())
-	w.Resize(fyne.NewSize(800, 400))
-	w.ShowAndRun()
-
 	u := &updater.Updater{
 		Provider: &provider.Github{
 			RepositoryURL: "github.com/mouuff/SmartCuts",
@@ -94,8 +93,6 @@ func (cmd *SmartCutCmd) Run() error {
 	if _, err := u.Update(); err != nil {
 		log.Println(err)
 	}
-
-	return nil
 }
 
 func main() {
@@ -104,8 +101,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = cmd.Run()
-	if err != nil {
-		log.Fatal(err)
-	}
+
+	a := app.New()
+	w := a.NewWindow("SmartCuts - " + SmartCutVersion)
+	w.Resize(fyne.NewSize(800, 400))
+	cmd.Run(a, w)
+	w.ShowAndRun()
 }

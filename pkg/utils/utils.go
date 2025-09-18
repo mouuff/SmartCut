@@ -25,14 +25,14 @@ func ReadFromJson(path string, dataOut interface{}) error {
 	return nil
 }
 
-func GetConfigurationFilePath() string {
+func GetConfigurationFilePath() (string, error) {
 	homeDir, err := os.UserHomeDir()
 
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
-	return filepath.Join(homeDir, ".smartcut.json")
+	return filepath.Join(homeDir, ".smartcut.json"), nil
 }
 
 func GetDefaultConfiguration() *types.SmartCutConfig {
@@ -60,7 +60,11 @@ func GetOrCreateConfiguration(configPath string) (*types.SmartCutConfig, error) 
 	var err error
 
 	if configPath == "" {
-		configPath = GetConfigurationFilePath()
+		configPath, err = GetConfigurationFilePath()
+	}
+
+	if err != nil {
+		return nil, err
 	}
 
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
