@@ -6,7 +6,7 @@ import (
 	"syscall"
 	"unsafe"
 
-	"github.com/mouuff/SmartCuts/pkg/types"
+	"github.com/mouuff/SmartCut/pkg/types"
 	"golang.design/x/clipboard"
 )
 

@@ -3,7 +3,7 @@ package inputreader
 import (
 	"context"
 
-	"github.com/mouuff/SmartCuts/pkg/types"
+	"github.com/mouuff/SmartCut/pkg/types"
 	"golang.design/x/clipboard"
 )
 

@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/mouuff/SmartCuts/pkg/utils"
+	"github.com/mouuff/SmartCut/pkg/utils"
 )
 
 // A simple struct to test unmarshalling

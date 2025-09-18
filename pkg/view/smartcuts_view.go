@@ -7,20 +7,20 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
-	"github.com/mouuff/SmartCuts/pkg/types"
-	"github.com/mouuff/SmartCuts/pkg/utils"
+	"github.com/mouuff/SmartCut/pkg/types"
+	"github.com/mouuff/SmartCut/pkg/utils"
 	"golang.design/x/clipboard"
 )
 
-type SmartsCutView struct {
+type SmartCutView struct {
 	window            fyne.Window
 	listContainer     *fyne.Container
-	model             *types.SmartCutsModel
+	model             *types.SmartCutModel
 	OnRequestGenerate func(types.InputText)
 }
 
-func NewSmartsCutView(w fyne.Window, m *types.SmartCutsModel) *SmartsCutView {
-	sc := &SmartsCutView{
+func NewSmartCutView(w fyne.Window, m *types.SmartCutModel) *SmartCutView {
+	sc := &SmartCutView{
 		listContainer:     container.NewVBox(),
 		window:            w,
 		model:             m,
@@ -32,19 +32,19 @@ func NewSmartsCutView(w fyne.Window, m *types.SmartCutsModel) *SmartsCutView {
 	return sc
 }
 
-func (sc *SmartsCutView) Refresh() {
+func (sc *SmartCutView) Refresh() {
 	fyne.Do(func() {
 		sc.refreshListResults()
 	})
 }
 
-func (sc *SmartsCutView) RequestFocus() {
+func (sc *SmartCutView) RequestFocus() {
 	fyne.Do(func() {
 		sc.window.RequestFocus()
 	})
 }
 
-func (sc *SmartsCutView) refreshListResults() {
+func (sc *SmartCutView) refreshListResults() {
 	sc.listContainer.Objects = nil
 	for _, item := range sc.model.ResultItems() {
 		title := widget.NewLabelWithStyle(item.Title, fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
@@ -81,7 +81,7 @@ func (sc *SmartsCutView) refreshListResults() {
 	sc.listContainer.Refresh()
 }
 
-func (sc *SmartsCutView) Layout() fyne.CanvasObject {
+func (sc *SmartCutView) Layout() fyne.CanvasObject {
 	addBtn := widget.NewButton("Generate from clipboard", func() {
 		sc.OnRequestGenerate(types.InputText{
 			Text:       string(clipboard.Read(clipboard.FmtText)),
@@ -95,7 +95,7 @@ func (sc *SmartsCutView) Layout() fyne.CanvasObject {
 			fyne.NewMenuItem("Help", func() {
 				helpmsg := "Shortcut for processing the current clipboard: Alt+Shift+G\nConfiguration file: {{configpath}}"
 				helpmsg = strings.ReplaceAll(helpmsg, "{{configpath}}", sc.model.Config().ConfigPath)
-				dialog.ShowInformation("About SmartCuts", helpmsg, sc.window)
+				dialog.ShowInformation("About SmartCut", helpmsg, sc.window)
 			}),
 			fyne.NewMenuItem("Configure", func() {
 				utils.OpenFile(sc.model.Config().ConfigPath)

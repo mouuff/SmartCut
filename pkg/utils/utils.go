@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/mouuff/SmartCuts/pkg/types"
+	"github.com/mouuff/SmartCut/pkg/types"
 )
 
 func ReadFromJson(path string, dataOut interface{}) error {
@@ -32,11 +32,11 @@ func GetConfigurationFilePath() (string, error) {
 		return "", err
 	}
 
-	return filepath.Join(homeDir, ".smartcuts.json"), nil
+	return filepath.Join(homeDir, ".smartcut.json"), nil
 }
 
-func GetDefaultConfiguration() *types.SmartCutsConfig {
-	return &types.SmartCutsConfig{
+func GetDefaultConfiguration() *types.SmartCutConfig {
+	return &types.SmartCutConfig{
 		HostUrl:        "default",
 		Model:          "llama3.2",
 		MinRowsVisible: 7,
@@ -56,7 +56,7 @@ func GetDefaultConfiguration() *types.SmartCutsConfig {
 
 }
 
-func GetOrCreateConfiguration(configPath string) (*types.SmartCutsConfig, error) {
+func GetOrCreateConfiguration(configPath string) (*types.SmartCutConfig, error) {
 	var err error
 
 	if configPath == "" {
@@ -82,7 +82,7 @@ func GetOrCreateConfiguration(configPath string) (*types.SmartCutsConfig, error)
 		log.Printf("Created default config file at %s\n", configPath)
 	}
 
-	var config types.SmartCutsConfig
+	var config types.SmartCutConfig
 	err = ReadFromJson(configPath, &config)
 	if err != nil {
 		return nil, fmt.Errorf("could not read config at %s: %w", configPath, err)

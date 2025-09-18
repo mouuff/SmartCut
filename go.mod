@@ -1,4 +1,4 @@
-module github.com/mouuff/SmartCuts
+module github.com/mouuff/SmartCut
 
 go 1.25.1
 

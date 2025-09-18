@@ -10,14 +10,14 @@ type ResultItem struct {
 	Content string
 }
 
-type SmartCutsModel struct {
-	config      *SmartCutsConfig
+type SmartCutModel struct {
+	config      *SmartCutConfig
 	resultItems []ResultItem
 
 	OnChanged func()
 }
 
-func NewSmartCutsModel(config *SmartCutsConfig) *SmartCutsModel {
+func NewSmartCutModel(config *SmartCutConfig) *SmartCutModel {
 	resultItems := make([]ResultItem, 0)
 	for _, promptConfig := range config.PromptConfigs {
 		resultItems = append(resultItems, ResultItem{
@@ -26,22 +26,22 @@ func NewSmartCutsModel(config *SmartCutsConfig) *SmartCutsModel {
 		})
 	}
 
-	return &SmartCutsModel{
+	return &SmartCutModel{
 		config:      config,
 		resultItems: resultItems,
 		OnChanged:   func() {},
 	}
 }
 
-func (m *SmartCutsModel) UpdateResultItem(index int, content string) {
+func (m *SmartCutModel) UpdateResultItem(index int, content string) {
 	m.resultItems[index].Content = content
 	m.OnChanged()
 }
 
-func (m *SmartCutsModel) ResultItems() []ResultItem {
+func (m *SmartCutModel) ResultItems() []ResultItem {
 	return m.resultItems
 }
 
-func (m *SmartCutsModel) Config() SmartCutsConfig {
+func (m *SmartCutModel) Config() SmartCutConfig {
 	return *m.config
 }

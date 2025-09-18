@@ -11,20 +11,20 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/dialog"
-	"github.com/mouuff/SmartCuts/pkg/brain"
-	"github.com/mouuff/SmartCuts/pkg/controller"
-	"github.com/mouuff/SmartCuts/pkg/inputreader"
-	"github.com/mouuff/SmartCuts/pkg/types"
-	"github.com/mouuff/SmartCuts/pkg/utils"
-	"github.com/mouuff/SmartCuts/pkg/view"
+	"github.com/mouuff/SmartCut/pkg/brain"
+	"github.com/mouuff/SmartCut/pkg/controller"
+	"github.com/mouuff/SmartCut/pkg/inputreader"
+	"github.com/mouuff/SmartCut/pkg/types"
+	"github.com/mouuff/SmartCut/pkg/utils"
+	"github.com/mouuff/SmartCut/pkg/view"
 	"github.com/mouuff/go-rocket-update/pkg/provider"
 	"github.com/mouuff/go-rocket-update/pkg/updater"
 	"golang.design/x/clipboard"
 )
 
-const SmartCutsVersion string = "1.0.0"
+const SmartCutVersion string = "1.0.0"
 
-type SmartCutsCmd struct {
+type SmartCutCmd struct {
 	flagSet *flag.FlagSet
 
 	config string
@@ -33,11 +33,11 @@ type SmartCutsCmd struct {
 func selfUpdate() {
 	u := &updater.Updater{
 		Provider: &provider.Github{
-			RepositoryURL: "github.com/mouuff/SmartCuts",
+			RepositoryURL: "github.com/mouuff/SmartCut",
 			ArchiveName:   fmt.Sprintf("binaries_%s.zip", runtime.GOOS),
 		},
-		ExecutableName: fmt.Sprintf("smartcuts_%s_%s", runtime.GOOS, runtime.GOARCH),
-		Version:        SmartCutsVersion,
+		ExecutableName: fmt.Sprintf("smartcut_%s_%s", runtime.GOOS, runtime.GOARCH),
+		Version:        SmartCutVersion,
 	}
 
 	if _, err := u.Update(); err != nil {
@@ -46,14 +46,14 @@ func selfUpdate() {
 }
 
 // Init initializes the command
-func (cmd *SmartCutsCmd) Init(args []string) error {
-	cmd.flagSet = flag.NewFlagSet("smartcuts", flag.ExitOnError)
+func (cmd *SmartCutCmd) Init(args []string) error {
+	cmd.flagSet = flag.NewFlagSet("smartcut", flag.ExitOnError)
 	cmd.flagSet.StringVar(&cmd.config, "config", "", "configuration file override")
 	return cmd.flagSet.Parse(args)
 }
 
 // Run runs the command
-func (cmd *SmartCutsCmd) Run(a fyne.App, w fyne.Window) error {
+func (cmd *SmartCutCmd) Run(a fyne.App, w fyne.Window) error {
 	config, err := utils.GetOrCreateConfiguration(cmd.config)
 	if err != nil {
 		return err
@@ -74,9 +74,9 @@ func (cmd *SmartCutsCmd) Run(a fyne.App, w fyne.Window) error {
 	ir.Start()
 
 	// MVC setup
-	m := types.NewSmartCutsModel(config)
-	v := view.NewSmartsCutView(w, m)
-	c := controller.NewSmartCutsController(context.Background(), b, m, config)
+	m := types.NewSmartCutModel(config)
+	v := view.NewSmartCutView(w, m)
+	c := controller.NewSmartCutController(context.Background(), b, m, config)
 
 	// Setup View / Controller hooks
 	ir.OnInput = c.GenerateForInput
@@ -88,14 +88,14 @@ func (cmd *SmartCutsCmd) Run(a fyne.App, w fyne.Window) error {
 }
 
 func main() {
-	cmd := &SmartCutsCmd{}
+	cmd := &SmartCutCmd{}
 	err := cmd.Init(os.Args[1:])
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	a := app.NewWithID("com.mouuff.smartcuts")
-	w := a.NewWindow("SmartCuts - " + SmartCutsVersion)
+	a := app.NewWithID("com.mouuff.smartcut")
+	w := a.NewWindow("SmartCut - " + SmartCutVersion)
 	w.Resize(fyne.NewSize(800, 400))
 	err = cmd.Run(a, w)
 
