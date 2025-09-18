@@ -73,7 +73,7 @@ func (cmd *SmartCutCmd) Run() error {
 
 	c := controller.NewSmartCutController(context.Background(), b, m, config)
 
-	// Setup MVC hooks
+	// Setup View / Controller hooks
 	v.OnAskGenerate = c.GenerateForInput
 	c.OnRequestFocus = v.RequestFocus
 
