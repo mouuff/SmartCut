@@ -8,7 +8,7 @@ import (
 	"github.com/mouuff/SmartCuts/pkg/types"
 )
 
-type ResultsGeneratorImpl struct {
+type SmartCutMainController struct {
 	inputReader types.InputReader
 	ch          chan types.GenerationResult
 	context     context.Context
@@ -16,12 +16,12 @@ type ResultsGeneratorImpl struct {
 	Config      *types.SmartCutConfig
 }
 
-func NewResultGenerator(
+func NewSmartCutMainController(
 	context context.Context,
 	brain types.Brain,
 	inputReader types.InputReader,
-	config *types.SmartCutConfig) *ResultsGeneratorImpl {
-	return &ResultsGeneratorImpl{
+	config *types.SmartCutConfig) *SmartCutMainController {
+	return &SmartCutMainController{
 		inputReader: inputReader,
 		ch:          make(chan types.GenerationResult),
 		context:     context,
@@ -30,7 +30,7 @@ func NewResultGenerator(
 	}
 }
 
-func (o *ResultsGeneratorImpl) Start() {
+func (o *SmartCutMainController) Start() {
 	go func() {
 		// Listen to clipboard changes
 		for data := range o.inputReader.GetChannel() {
@@ -41,11 +41,11 @@ func (o *ResultsGeneratorImpl) Start() {
 	}()
 }
 
-func (o *ResultsGeneratorImpl) GetChannel() chan types.GenerationResult {
+func (o *SmartCutMainController) GetChannel() chan types.GenerationResult {
 	return o.ch
 }
 
-func (o *ResultsGeneratorImpl) GenerateForInput(input types.InputResult) {
+func (o *SmartCutMainController) GenerateForInput(input types.InputResult) {
 	if o.Config.Debug {
 		log.Println("Clipboard changed:", input.Text)
 	}
@@ -56,7 +56,7 @@ func (o *ResultsGeneratorImpl) GenerateForInput(input types.InputResult) {
 	}
 }
 
-func (o *ResultsGeneratorImpl) generateForPromptConfig(input types.InputResult, promptConfig *types.PromptConfig) {
+func (o *SmartCutMainController) generateForPromptConfig(input types.InputResult, promptConfig *types.PromptConfig) {
 	o.ch <- types.GenerationResult{
 		Text:         "Generating...",
 		PromptConfig: promptConfig,

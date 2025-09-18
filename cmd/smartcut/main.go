@@ -63,7 +63,7 @@ func (cmd *SmartCutCmd) Run() error {
 	ir := inputreader.NewShortcutInputReader()
 	ir.Start()
 
-	rg := generator.NewResultGenerator(context.Background(), b, ir, config)
+	rg := generator.NewSmartCutMainController(context.Background(), b, ir, config)
 	rg.Start()
 
 	a := app.New()
