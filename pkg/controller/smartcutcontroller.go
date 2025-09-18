@@ -1,4 +1,4 @@
-package generator
+package controller
 
 import (
 	"context"
@@ -6,8 +6,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/mouuff/SmartCuts/pkg/app"
 	"github.com/mouuff/SmartCuts/pkg/types"
+	"github.com/mouuff/SmartCuts/pkg/view"
 )
 
 type SmartCutMainController struct {
@@ -15,7 +15,7 @@ type SmartCutMainController struct {
 	context context.Context
 	brain   types.Brain
 	config  *types.SmartCutConfig
-	view    *app.SmartCutApp
+	view    *view.SmartCutView
 	model   *types.SmartCutModel
 }
 
@@ -38,7 +38,7 @@ func getModelForConfig(config *types.SmartCutConfig) *types.SmartCutModel {
 func NewSmartCutMainController(
 	context context.Context,
 	brain types.Brain,
-	view *app.SmartCutApp,
+	view *view.SmartCutView,
 	config *types.SmartCutConfig) *SmartCutMainController {
 	return &SmartCutMainController{
 		context: context,

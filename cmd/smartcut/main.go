@@ -10,17 +10,17 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
-	smartcutapp "github.com/mouuff/SmartCuts/pkg/app"
 	"github.com/mouuff/SmartCuts/pkg/brain"
-	"github.com/mouuff/SmartCuts/pkg/generator"
+	"github.com/mouuff/SmartCuts/pkg/controller"
 	"github.com/mouuff/SmartCuts/pkg/inputreader"
 	"github.com/mouuff/SmartCuts/pkg/utils"
+	"github.com/mouuff/SmartCuts/pkg/view"
 	"github.com/mouuff/go-rocket-update/pkg/provider"
 	"github.com/mouuff/go-rocket-update/pkg/updater"
 	"golang.design/x/clipboard"
 )
 
-const SmartCutVersion string = "v0.0.2"
+const SmartCutVersion string = "v0.0.3"
 
 type SmartCutCmd struct {
 	flagSet *flag.FlagSet
@@ -66,14 +66,14 @@ func (cmd *SmartCutCmd) Run() error {
 	a := app.New()
 	w := a.NewWindow("SmartCuts - " + SmartCutVersion)
 
-	smartcut := smartcutapp.NewSmartCutApp(w)
+	smartcutview := view.NewSmartCutView(w)
 
-	rg := generator.NewSmartCutMainController(context.Background(), b, smartcut, config)
-	smartcut.OnAskGenerate = rg.GenerateForInput
+	rg := controller.NewSmartCutMainController(context.Background(), b, smartcutview, config)
+	smartcutview.OnAskGenerate = rg.GenerateForInput
 	rg.ListenTo(ir)
 	rg.RefreshView()
 
-	w.SetContent(smartcut.Layout())
+	w.SetContent(smartcutview.Layout())
 	w.Resize(fyne.NewSize(800, 400))
 	w.ShowAndRun()
 

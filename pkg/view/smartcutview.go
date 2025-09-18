@@ -1,4 +1,4 @@
-package app
+package view
 
 import (
 	"strings"
@@ -12,14 +12,14 @@ import (
 	"golang.design/x/clipboard"
 )
 
-type SmartCutApp struct {
+type SmartCutView struct {
 	listContainer *fyne.Container
 	window        fyne.Window
 	OnAskGenerate func(types.InputResult)
 }
 
-func NewSmartCutApp(w fyne.Window) *SmartCutApp {
-	sc := &SmartCutApp{
+func NewSmartCutView(w fyne.Window) *SmartCutView {
+	sc := &SmartCutView{
 		listContainer: container.NewVBox(),
 		window:        w,
 		OnAskGenerate: func(types.InputResult) {},
@@ -28,19 +28,19 @@ func NewSmartCutApp(w fyne.Window) *SmartCutApp {
 	return sc
 }
 
-func (sc *SmartCutApp) DoRefresh(model *types.SmartCutModel) {
+func (sc *SmartCutView) DoRefresh(model *types.SmartCutModel) {
 	fyne.Do(func() {
 		sc.refreshListContainer(model)
 	})
 }
 
-func (sc *SmartCutApp) RequestFocus() {
+func (sc *SmartCutView) RequestFocus() {
 	fyne.Do(func() {
 		sc.window.RequestFocus()
 	})
 }
 
-func (sc *SmartCutApp) refreshListContainer(model *types.SmartCutModel) {
+func (sc *SmartCutView) refreshListContainer(model *types.SmartCutModel) {
 	sc.listContainer.Objects = nil
 	for _, item := range model.ResultItems {
 		title := widget.NewLabelWithStyle(item.Title, fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
@@ -77,7 +77,7 @@ func (sc *SmartCutApp) refreshListContainer(model *types.SmartCutModel) {
 	sc.listContainer.Refresh()
 }
 
-func (sc *SmartCutApp) Layout() fyne.CanvasObject {
+func (sc *SmartCutView) Layout() fyne.CanvasObject {
 	addBtn := widget.NewButton("Generate from clipboard", func() {
 		sc.OnAskGenerate(types.InputResult{
 			Text:       string(clipboard.Read(clipboard.FmtText)),
