@@ -19,17 +19,6 @@ type SmartCutApp struct {
 }
 
 func NewSmartCutApp(w fyne.Window) *SmartCutApp {
-
-	/*
-		items := make([]Item, 0)
-		for _, hook := range config.PromptConfigs {
-			items = append(items, Item{
-				Title:   hook.Title,
-				Content: "Waiting for generation...",
-			})
-		}
-	*/
-
 	sc := &SmartCutApp{
 		listContainer: container.NewVBox(),
 		window:        w,
@@ -38,7 +27,6 @@ func NewSmartCutApp(w fyne.Window) *SmartCutApp {
 
 	// Render initial list
 	// sc.Refresh()
-
 	return sc
 }
 
@@ -46,20 +34,19 @@ func (sc *SmartCutApp) SetOnAskGenerate(f func()) {
 	sc.onAskGenerate = f
 }
 
-/*
-func (sc *SmartCutApp) Start() {
-
+func (sc *SmartCutApp) RefreshFromThread(model *types.SmartCutModel) {
 	go func() {
-		for res := range sc.rg.GetChannel() {
-			fyne.Do(func() {
-				sc.UpdateItem(res)
-			})
-		}
+		fyne.Do(func() {
+			sc.Refresh(model)
+		})
 	}()
 }
-*/
 
-func (sc *SmartCutApp) Refresh(model types.SmartCutModel) {
+func (sc *SmartCutApp) RequestFocus() {
+	sc.window.RequestFocus()
+}
+
+func (sc *SmartCutApp) Refresh(model *types.SmartCutModel) {
 	sc.listContainer.Objects = nil
 	for _, item := range model.ResultItems {
 		title := widget.NewLabelWithStyle(item.Title, fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
@@ -94,11 +81,6 @@ func (sc *SmartCutApp) Refresh(model types.SmartCutModel) {
 	}
 
 	sc.listContainer.Refresh()
-}
-
-// AddItem appends a new item and refreshes the view
-func (sc *SmartCutApp) RequestFocus() {
-	sc.window.RequestFocus()
 }
 
 func (sc *SmartCutApp) Layout() fyne.CanvasObject {
