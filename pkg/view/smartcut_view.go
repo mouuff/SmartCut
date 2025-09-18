@@ -28,13 +28,13 @@ func NewSmartCutView(w fyne.Window, m *types.SmartCutModel) *SmartCutView {
 	}
 
 	m.OnChanged = sc.Refresh
-	sc.refreshListContainer()
+	sc.refreshListResults()
 	return sc
 }
 
 func (sc *SmartCutView) Refresh() {
 	fyne.Do(func() {
-		sc.refreshListContainer()
+		sc.refreshListResults()
 	})
 }
 
@@ -44,7 +44,7 @@ func (sc *SmartCutView) RequestFocus() {
 	})
 }
 
-func (sc *SmartCutView) refreshListContainer() {
+func (sc *SmartCutView) refreshListResults() {
 	sc.listContainer.Objects = nil
 	for _, item := range sc.model.ResultItems() {
 		title := widget.NewLabelWithStyle(item.Title, fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
