@@ -87,7 +87,7 @@ func (o *SmartCutController) GenerateForInput(input types.InputText) {
 	}
 
 	// For each prompt config, generate the result
-	for _, promptConfig := range o.config.PromptConfigs {
+	for index, promptConfig := range o.config.PromptConfigs {
 		go func() {
 			prompt := strings.ReplaceAll(promptConfig.PromptTemplate, "{{input}}", input.Text)
 			result, err := o.brain.GenerateString(o.context, promptConfig.PropertyName, prompt)
@@ -96,7 +96,7 @@ func (o *SmartCutController) GenerateForInput(input types.InputText) {
 				result = "Error while generating: " + err.Error()
 			}
 
-			o.UpdateItemContent(promptConfig.Index, result)
+			o.UpdateItemContent(index, result)
 		}()
 	}
 }

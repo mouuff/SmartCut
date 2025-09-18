@@ -6,7 +6,6 @@ import (
 
 // PromptConfig represents a single prompt configuration
 type PromptConfig struct {
-	Index          int
 	Title          string
 	PromptTemplate string
 	PropertyName   string

@@ -82,11 +82,6 @@ func GetOrCreateConfiguration(configPath string) (*types.SmartCutConfig, error) 
 		return nil, fmt.Errorf("could not read config at: %w", err)
 	}
 
-	// Making sure the indexes are set correctly
-	for i, promptConfig := range config.PromptConfigs {
-		promptConfig.Index = i
-	}
-
 	return &config, nil
 }
 
