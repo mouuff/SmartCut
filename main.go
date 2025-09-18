@@ -13,7 +13,7 @@ import (
 	"fyne.io/fyne/v2/dialog"
 	"github.com/mouuff/SmartCut/pkg/brain"
 	"github.com/mouuff/SmartCut/pkg/controller"
-	"github.com/mouuff/SmartCut/pkg/inputreader"
+	"github.com/mouuff/SmartCut/pkg/reader"
 	"github.com/mouuff/SmartCut/pkg/types"
 	"github.com/mouuff/SmartCut/pkg/utils"
 	"github.com/mouuff/SmartCut/pkg/view"
@@ -69,8 +69,8 @@ func (cmd *SmartCutCmd) Run(a fyne.App, w fyne.Window) error {
 		return err
 	}
 
-	// ir := inputreader.NewClipboardReader(ctx.Background())
-	ir := inputreader.NewShortcutReader()
+	// ir := reader.NewClipboardReader(ctx.Background())
+	ir := reader.NewShortcutReader()
 	ir.Start()
 
 	// MVC setup

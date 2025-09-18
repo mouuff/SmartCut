@@ -1,4 +1,4 @@
-package inputreader
+package reader
 
 import (
 	"context"
