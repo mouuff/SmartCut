@@ -1,5 +1,10 @@
 package types
 
+type InputText struct {
+	IsExplicit bool
+	Text       string
+}
+
 type ResultItem struct {
 	Title   string
 	Content string
