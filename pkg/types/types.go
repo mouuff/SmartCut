@@ -21,8 +21,8 @@ type SmartCutConfig struct {
 	PromptConfigs  []*PromptConfig
 }
 
-// InputResult represents the result of a user input
-type InputResult struct {
+// InputText represents the result of a user input
+type InputText struct {
 	IsExplicit bool
 	Text       string
 }
@@ -32,5 +32,5 @@ type Brain interface {
 }
 
 type InputReader interface {
-	GetChannel() chan InputResult
+	GetChannel() chan InputText
 }

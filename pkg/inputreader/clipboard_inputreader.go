@@ -9,13 +9,13 @@ import (
 
 type ClipboardInputReader struct {
 	context context.Context
-	ch      chan types.InputResult
+	ch      chan types.InputText
 }
 
 func NewClipboardInputReader(context context.Context) *ClipboardInputReader {
 	return &ClipboardInputReader{
 		context: context,
-		ch:      make(chan types.InputResult),
+		ch:      make(chan types.InputText),
 	}
 }
 
@@ -25,7 +25,7 @@ func (c *ClipboardInputReader) Start() {
 
 	go func() {
 		for data := range clipch {
-			c.ch <- types.InputResult{
+			c.ch <- types.InputText{
 				Text:       string(data),
 				IsExplicit: false,
 			}
@@ -33,6 +33,6 @@ func (c *ClipboardInputReader) Start() {
 	}()
 }
 
-func (c *ClipboardInputReader) GetChannel() chan types.InputResult {
+func (c *ClipboardInputReader) GetChannel() chan types.InputText {
 	return c.ch
 }

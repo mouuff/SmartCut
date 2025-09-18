@@ -44,6 +44,10 @@ func (cmd *SmartCutCmd) Run() error {
 		return nil
 	}
 
+	a := app.New()
+	w := a.NewWindow("SmartCuts - " + SmartCutVersion)
+	v := view.NewSmartCutView(w)
+
 	config, err := utils.GetOrCreateConfiguration(cmd.config)
 	if err != nil {
 		return err
@@ -63,17 +67,11 @@ func (cmd *SmartCutCmd) Run() error {
 	ir := inputreader.NewShortcutInputReader()
 	ir.Start()
 
-	a := app.New()
-	w := a.NewWindow("SmartCuts - " + SmartCutVersion)
-
-	smartcutview := view.NewSmartCutView(w)
-
-	rg := controller.NewSmartCutController(context.Background(), b, smartcutview, config)
-	smartcutview.OnAskGenerate = rg.GenerateForInput
+	rg := controller.NewSmartCutController(context.Background(), b, v, config)
 	rg.ListenTo(ir)
-	rg.RefreshView()
+	rg.Init()
 
-	w.SetContent(smartcutview.Layout())
+	w.SetContent(v.Layout())
 	w.Resize(fyne.NewSize(800, 400))
 	w.ShowAndRun()
 

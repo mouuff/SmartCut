@@ -60,7 +60,8 @@ func (o *SmartCutController) ListenTo(inputReader types.InputReader) {
 	}()
 }
 
-func (o *SmartCutController) RefreshView() {
+func (o *SmartCutController) Init() {
+	o.view.OnAskGenerate = o.GenerateForInput
 	o.view.DoRefresh(o.model)
 }
 
@@ -69,10 +70,10 @@ func (o *SmartCutController) UpdateItemContent(index int, content string) {
 	defer o.mu.Unlock()
 
 	o.model.ResultItems[index].Content = content
-	o.RefreshView()
+	o.view.DoRefresh(o.model)
 }
 
-func (o *SmartCutController) GenerateForInput(input types.InputResult) {
+func (o *SmartCutController) GenerateForInput(input types.InputText) {
 	if o.config.Debug {
 		log.Println("GenerateForInput:", input.Text)
 	}
