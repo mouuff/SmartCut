@@ -8,22 +8,22 @@ import (
 )
 
 type SmartCutController struct {
-	mu      sync.Mutex
-	context context.Context
-	brain   types.Brain
-	config  *types.SmartCutConfig
-	model   *types.SmartCutModel
+	mu     sync.Mutex
+	ctx    context.Context
+	brain  types.Brain
+	config *types.SmartCutConfig
+	model  *types.SmartCutModel
 
 	OnRequestFocus func()
 }
 
 func NewSmartCutController(
-	context context.Context,
+	ctx context.Context,
 	brain types.Brain,
 	model *types.SmartCutModel,
 	config *types.SmartCutConfig) *SmartCutController {
 	return &SmartCutController{
-		context:        context,
+		ctx:            ctx,
 		brain:          brain,
 		config:         config,
 		model:          model,
@@ -54,8 +54,8 @@ func (o *SmartCutController) GenerateForInput(input types.InputText) {
 	}
 }
 
-func (o *SmartCutController) generateItemContent(index int, prompt, propertyName string) {
-	result, err := o.brain.GenerateString(o.context, propertyName, prompt)
+func (o *SmartCutController) generateItemContent(index int, propertyName, prompt string) {
+	result, err := o.brain.GenerateString(o.ctx, propertyName, prompt)
 
 	if err != nil {
 		result = "Error while generating: " + err.Error()

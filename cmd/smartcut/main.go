@@ -67,7 +67,7 @@ func (cmd *SmartCutCmd) Run() error {
 		panic(err)
 	}
 
-	// ir := inputreader.NewClipboardInputReader(context.Background())
+	// ir := inputreader.NewClipboardInputReader(ctx.Background())
 	ir := inputreader.NewShortcutInputReader()
 	ir.Start()
 

@@ -8,20 +8,20 @@ import (
 )
 
 type ClipboardInputReader struct {
-	context context.Context
+	ctx     context.Context
 	OnInput func(types.InputText)
 }
 
-func NewClipboardInputReader(context context.Context) *ClipboardInputReader {
+func NewClipboardInputReader(ctx context.Context) *ClipboardInputReader {
 	return &ClipboardInputReader{
-		context: context,
+		ctx:     ctx,
 		OnInput: func(types.InputText) {},
 	}
 }
 
 func (c *ClipboardInputReader) Start() {
 
-	clipch := clipboard.Watch(c.context, clipboard.FmtText)
+	clipch := clipboard.Watch(c.ctx, clipboard.FmtText)
 
 	go func() {
 		for data := range clipch {
