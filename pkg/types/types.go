@@ -21,14 +21,6 @@ type SmartCutConfig struct {
 	PromptConfigs  []*PromptConfig
 }
 
-// GenerationResult represents the result of a generation
-type GenerationResult struct {
-	PromptConfig *PromptConfig
-	OriginalText string
-	Text         string
-	IsExplicit   bool
-}
-
 // InputResult represents the result of a user input
 type InputResult struct {
 	IsExplicit bool
@@ -37,11 +29,6 @@ type InputResult struct {
 
 type Brain interface {
 	GenerateString(ctx context.Context, propertyName, prompt string) (string, error)
-}
-
-type ResultsGenerator interface {
-	GetChannel() chan GenerationResult
-	GenerateForInput(input InputResult)
 }
 
 type InputReader interface {

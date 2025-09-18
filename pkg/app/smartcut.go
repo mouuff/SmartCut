@@ -12,60 +12,37 @@ import (
 	"golang.design/x/clipboard"
 )
 
-type Item struct {
-	Title   string
-	Content string
-}
-
 type SmartCutApp struct {
-	rg            types.ResultsGenerator
-	items         []Item
 	listContainer *fyne.Container
 	window        fyne.Window
-
-	Config *types.SmartCutConfig
+	OnAskGenerate func(types.InputResult)
 }
 
-func NewSmartCutApp(
-	w fyne.Window,
-	config *types.SmartCutConfig,
-	rg types.ResultsGenerator) *SmartCutApp {
-
-	items := make([]Item, 0)
-	for _, hook := range config.PromptConfigs {
-		items = append(items, Item{
-			Title:   hook.Title,
-			Content: "Waiting for generation...",
-		})
-	}
-
+func NewSmartCutApp(w fyne.Window) *SmartCutApp {
 	sc := &SmartCutApp{
-		items:         items,
 		listContainer: container.NewVBox(),
 		window:        w,
-		Config:        config,
-		rg:            rg,
+		OnAskGenerate: func(types.InputResult) {},
 	}
-
-	// Render initial list
-	sc.RefreshList()
 
 	return sc
 }
 
-func (sc *SmartCutApp) Start() {
-	go func() {
-		for res := range sc.rg.GetChannel() {
-			fyne.Do(func() {
-				sc.UpdateItem(res)
-			})
-		}
-	}()
+func (sc *SmartCutApp) DoRefresh(model *types.SmartCutModel) {
+	fyne.Do(func() {
+		sc.refreshListContainer(model)
+	})
 }
 
-func (sc *SmartCutApp) RefreshList() {
+func (sc *SmartCutApp) RequestFocus() {
+	fyne.Do(func() {
+		sc.window.RequestFocus()
+	})
+}
+
+func (sc *SmartCutApp) refreshListContainer(model *types.SmartCutModel) {
 	sc.listContainer.Objects = nil
-	for _, item := range sc.items {
+	for _, item := range model.ResultItems {
 		title := widget.NewLabelWithStyle(item.Title, fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
 
 		// Multiline selectable Entry, but locked to read-only
@@ -77,7 +54,7 @@ func (sc *SmartCutApp) RefreshList() {
 			// Reset text if user tries to type
 			content.SetText(item.Content)
 		}
-		content.SetMinRowsVisible(sc.Config.MinRowsVisible)
+		content.SetMinRowsVisible(model.MinRowsVisible)
 
 		// Let content expand horizontally
 		contentContainer := container.NewStack(content)
@@ -96,29 +73,16 @@ func (sc *SmartCutApp) RefreshList() {
 
 		sc.listContainer.Add(row)
 	}
+
 	sc.listContainer.Refresh()
-}
-
-// AddItem appends a new item and refreshes the view
-func (sc *SmartCutApp) UpdateItem(result types.GenerationResult) {
-	sc.items[result.PromptConfig.Index].Content = result.Text
-	sc.RefreshList()
-
-	if result.IsExplicit {
-		sc.window.RequestFocus()
-	}
 }
 
 func (sc *SmartCutApp) Layout() fyne.CanvasObject {
 	addBtn := widget.NewButton("Generate from clipboard", func() {
-		rawclip := clipboard.Read(clipboard.FmtText)
-
-		if rawclip != nil {
-			sc.rg.GenerateForInput(types.InputResult{
-				Text:       string(rawclip),
-				IsExplicit: true,
-			})
-		}
+		sc.OnAskGenerate(types.InputResult{
+			Text:       string(clipboard.Read(clipboard.FmtText)),
+			IsExplicit: true,
+		})
 	})
 
 	helpmsg := `Shortcut for processing the current clipboard: Alt+Shift+G

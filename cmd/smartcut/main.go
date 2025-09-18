@@ -63,14 +63,15 @@ func (cmd *SmartCutCmd) Run() error {
 	ir := inputreader.NewShortcutInputReader()
 	ir.Start()
 
-	rg := generator.NewSmartCutMainController(context.Background(), b, ir, config)
-	rg.Start()
-
 	a := app.New()
 	w := a.NewWindow("SmartCuts - " + SmartCutVersion)
 
-	smartcut := smartcutapp.NewSmartCutApp(w, config, rg)
-	smartcut.Start()
+	smartcut := smartcutapp.NewSmartCutApp(w)
+
+	rg := generator.NewSmartCutMainController(context.Background(), b, smartcut, config)
+	smartcut.OnAskGenerate = rg.GenerateForInput
+	rg.ListenTo(ir)
+	rg.RefreshView()
 
 	w.SetContent(smartcut.Layout())
 	w.Resize(fyne.NewSize(800, 400))
