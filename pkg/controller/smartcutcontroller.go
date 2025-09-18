@@ -10,7 +10,7 @@ import (
 	"github.com/mouuff/SmartCuts/pkg/view"
 )
 
-type SmartCutMainController struct {
+type SmartCutController struct {
 	mu      sync.Mutex
 	context context.Context
 	brain   types.Brain
@@ -35,12 +35,12 @@ func getModelForConfig(config *types.SmartCutConfig) *types.SmartCutModel {
 	return model
 }
 
-func NewSmartCutMainController(
+func NewSmartCutController(
 	context context.Context,
 	brain types.Brain,
 	view *view.SmartCutView,
-	config *types.SmartCutConfig) *SmartCutMainController {
-	return &SmartCutMainController{
+	config *types.SmartCutConfig) *SmartCutController {
+	return &SmartCutController{
 		context: context,
 		brain:   brain,
 		config:  config,
@@ -49,7 +49,7 @@ func NewSmartCutMainController(
 	}
 }
 
-func (o *SmartCutMainController) ListenTo(inputReader types.InputReader) {
+func (o *SmartCutController) ListenTo(inputReader types.InputReader) {
 	go func() {
 		// Listen to clipboard changes
 		for data := range inputReader.GetChannel() {
@@ -60,11 +60,11 @@ func (o *SmartCutMainController) ListenTo(inputReader types.InputReader) {
 	}()
 }
 
-func (o *SmartCutMainController) RefreshView() {
+func (o *SmartCutController) RefreshView() {
 	o.view.DoRefresh(o.model)
 }
 
-func (o *SmartCutMainController) UpdateItemContent(index int, content string) {
+func (o *SmartCutController) UpdateItemContent(index int, content string) {
 	o.mu.Lock()
 	defer o.mu.Unlock()
 
@@ -72,7 +72,7 @@ func (o *SmartCutMainController) UpdateItemContent(index int, content string) {
 	o.RefreshView()
 }
 
-func (o *SmartCutMainController) GenerateForInput(input types.InputResult) {
+func (o *SmartCutController) GenerateForInput(input types.InputResult) {
 	if o.config.Debug {
 		log.Println("GenerateForInput:", input.Text)
 	}

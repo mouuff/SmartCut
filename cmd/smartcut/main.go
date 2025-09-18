@@ -68,7 +68,7 @@ func (cmd *SmartCutCmd) Run() error {
 
 	smartcutview := view.NewSmartCutView(w)
 
-	rg := controller.NewSmartCutMainController(context.Background(), b, smartcutview, config)
+	rg := controller.NewSmartCutController(context.Background(), b, smartcutview, config)
 	smartcutview.OnAskGenerate = rg.GenerateForInput
 	rg.ListenTo(ir)
 	rg.RefreshView()
