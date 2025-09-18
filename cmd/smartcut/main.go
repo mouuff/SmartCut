@@ -30,6 +30,21 @@ type SmartCutCmd struct {
 	config string
 }
 
+func selfUpdate() {
+	u := &updater.Updater{
+		Provider: &provider.Github{
+			RepositoryURL: "github.com/mouuff/SmartCuts",
+			ArchiveName:   fmt.Sprintf("binaries_%s.zip", runtime.GOOS),
+		},
+		ExecutableName: fmt.Sprintf("smartcut_%s_%s", runtime.GOOS, runtime.GOARCH),
+		Version:        SmartCutVersion,
+	}
+
+	if _, err := u.Update(); err != nil {
+		log.Println(err)
+	}
+}
+
 // Init initializes the command
 func (cmd *SmartCutCmd) Init(args []string) error {
 	cmd.flagSet = flag.NewFlagSet("smartcut", flag.ExitOnError)
@@ -71,19 +86,6 @@ func (cmd *SmartCutCmd) Run(a fyne.App, w fyne.Window) error {
 	v.OnRequestGenerate = c.GenerateForInput
 	c.OnRequestFocus = v.RequestFocus
 
-	u := &updater.Updater{
-		Provider: &provider.Github{
-			RepositoryURL: "github.com/mouuff/SmartCuts",
-			ArchiveName:   fmt.Sprintf("binaries_%s.zip", runtime.GOOS),
-		},
-		ExecutableName: fmt.Sprintf("smartcut_%s_%s", runtime.GOOS, runtime.GOARCH),
-		Version:        SmartCutVersion,
-	}
-
-	if _, err := u.Update(); err != nil {
-		log.Println(err)
-	}
-
 	return nil
 }
 
@@ -104,4 +106,5 @@ func main() {
 	}
 
 	w.ShowAndRun()
+	selfUpdate()
 }

@@ -1,6 +1,6 @@
 
-binary_name=$(go run cmd/smartcut/main.go -printBin=true)
+binary_name=smartcut_windows_amd64.exe
 go build -ldflags -H=windowsgui cmd/smartcut/main.go
-mv main.exe $binary_name.exe
+mv main.exe smartcut_windows_amd64.exe
 rm binaries.zip
-zip -r binaries.zip $binary_name.exe
+zip -r binaries_windows.zip smartcut_windows_amd64.exe
