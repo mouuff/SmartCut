@@ -15,38 +15,32 @@ import (
 type SmartCutApp struct {
 	listContainer *fyne.Container
 	window        fyne.Window
-	onAskGenerate func()
+	OnAskGenerate func()
 }
 
 func NewSmartCutApp(w fyne.Window) *SmartCutApp {
 	sc := &SmartCutApp{
 		listContainer: container.NewVBox(),
 		window:        w,
-		onAskGenerate: func() {},
+		OnAskGenerate: func() {},
 	}
 
-	// Render initial list
-	// sc.Refresh()
 	return sc
 }
 
-func (sc *SmartCutApp) SetOnAskGenerate(f func()) {
-	sc.onAskGenerate = f
-}
-
-func (sc *SmartCutApp) RefreshFromThread(model *types.SmartCutModel) {
-	go func() {
-		fyne.Do(func() {
-			sc.Refresh(model)
-		})
-	}()
+func (sc *SmartCutApp) DoRefresh(model *types.SmartCutModel) {
+	fyne.Do(func() {
+		sc.refreshListContainer(model)
+	})
 }
 
 func (sc *SmartCutApp) RequestFocus() {
-	sc.window.RequestFocus()
+	fyne.Do(func() {
+		sc.window.RequestFocus()
+	})
 }
 
-func (sc *SmartCutApp) Refresh(model *types.SmartCutModel) {
+func (sc *SmartCutApp) refreshListContainer(model *types.SmartCutModel) {
 	sc.listContainer.Objects = nil
 	for _, item := range model.ResultItems {
 		title := widget.NewLabelWithStyle(item.Title, fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
@@ -85,7 +79,7 @@ func (sc *SmartCutApp) Refresh(model *types.SmartCutModel) {
 
 func (sc *SmartCutApp) Layout() fyne.CanvasObject {
 	addBtn := widget.NewButton("Generate from clipboard", func() {
-		sc.onAskGenerate()
+		sc.OnAskGenerate()
 	})
 
 	helpmsg := `Shortcut for processing the current clipboard: Alt+Shift+G

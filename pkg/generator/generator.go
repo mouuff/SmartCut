@@ -60,11 +60,16 @@ func (o *SmartCutMainController) ListenTo(inputReader types.InputReader) {
 	}()
 }
 
+func (o *SmartCutMainController) RefreshView() {
+	o.view.DoRefresh(o.model)
+}
+
 func (o *SmartCutMainController) UpdateItemContent(index int, content string) {
 	o.mu.Lock()
+	defer o.mu.Unlock()
+
 	o.model.ResultItems[index].Content = content
-	o.view.RefreshFromThread(o.model)
-	o.mu.Unlock()
+	o.RefreshView()
 }
 
 func (o *SmartCutMainController) GenerateForInput(input types.InputResult) {
