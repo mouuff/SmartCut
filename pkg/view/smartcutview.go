@@ -92,7 +92,7 @@ func (sc *SmartCutView) Layout() fyne.CanvasObject {
 	helpmsg := `Shortcut for processing the current clipboard: Alt+Shift+G
 	Configuration file: {{configpath}}`
 
-	helpmsg = strings.ReplaceAll(helpmsg, "{{configpath}}", utils.GetConfigurationFilePath())
+	helpmsg = strings.ReplaceAll(helpmsg, "{{configpath}}", sc.model.ConfigPath())
 
 	// Menu bar with Help
 	menu := fyne.NewMainMenu(
@@ -101,7 +101,7 @@ func (sc *SmartCutView) Layout() fyne.CanvasObject {
 				dialog.ShowInformation("About SmartCut", helpmsg, sc.window)
 			}),
 			fyne.NewMenuItem("Configure", func() {
-				utils.OpenFile(utils.GetConfigurationFilePath())
+				utils.OpenFile(sc.model.ConfigPath())
 				dialog.ShowInformation("Warning", "You must restart the application to apply configuration changes", sc.window)
 			}),
 		),
