@@ -94,7 +94,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	a := app.New()
+	a := app.NewWithID("com.mouuff.smartcut")
 	w := a.NewWindow("SmartCuts - " + SmartCutVersion)
 	w.Resize(fyne.NewSize(800, 400))
 	err = cmd.Run(a, w)
