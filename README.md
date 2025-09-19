@@ -30,7 +30,7 @@ Example configuration:
 
 ![Demo config](images/config_1.png)
 
-Example usage:
+Usage example, rewriting an email:
 
 ![Demo](images/demo.png)
 
