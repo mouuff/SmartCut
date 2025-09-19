@@ -70,7 +70,7 @@ func (cmd *SmartCutCmd) Run(a fyne.App, w fyne.Window) error {
 	}
 
 	// ir := reader.NewClipboardReader(ctx.Background())
-	ir := reader.NewShortcutReader()
+	ir := reader.NewShortcutReaderV2()
 	ir.Start()
 
 	// MVC setup

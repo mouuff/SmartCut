@@ -7,6 +7,7 @@ require (
 	github.com/mouuff/go-rocket-update v1.5.4
 	github.com/ollama/ollama v0.11.11
 	golang.design/x/clipboard v0.7.1
+	golang.design/x/hotkey v0.4.1
 )
 
 require (
@@ -37,6 +38,7 @@ require (
 	github.com/srwiley/rasterx v0.0.0-20220730225603-2ab79fcdd4ef // indirect
 	github.com/stretchr/testify v1.10.0 // indirect
 	github.com/yuin/goldmark v1.7.8 // indirect
+	golang.design/x/mainthread v0.3.0 // indirect
 	golang.org/x/crypto v0.36.0 // indirect
 	golang.org/x/exp/shiny v0.0.0-20250606033433-dcc06ee1d476 // indirect
 	golang.org/x/image v0.28.0 // indirect
