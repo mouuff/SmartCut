@@ -43,6 +43,10 @@ func selfUpdate() {
 	if _, err := u.Update(); err != nil {
 		log.Println(err)
 	}
+
+	if err := u.CleanUp(); err != nil {
+		log.Println(err)
+	}
 }
 
 // Init initializes the command
