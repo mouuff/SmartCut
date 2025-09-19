@@ -2,11 +2,14 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"runtime"
+	"strings"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -22,15 +25,38 @@ import (
 	"golang.design/x/clipboard"
 )
 
-const SmartCutVersion string = "v1.0.1"
+const SmartCutVersion string = "v1.0.2"
 
-type SmartCutCmd struct {
-	flagSet *flag.FlagSet
+// verifyInstallation verifies if the executable is installed correctly
+// we are going to run the newly installed program by running it with -version
+// if it outputs the good version then we assume the installation is good
+func verifyInstallation(u *updater.Updater) error {
+	latestVersion, err := u.GetLatestVersion()
+	if err != nil {
+		return err
+	}
+	executable, err := u.GetExecutable()
+	if err != nil {
+		return err
+	}
+	cmd := exec.Cmd{
+		Path: executable,
+		Args: []string{executable, "-version"},
+	}
+	// Should be replaced with Output() as soon as test project is updated
+	output, err := cmd.Output()
+	if err != nil {
+		return err
+	}
+	strOutput := string(output)
 
-	config string
+	if !strings.Contains(strOutput, latestVersion) {
+		return errors.New("Version not found in program output")
+	}
+	return nil
 }
 
-func selfUpdate() {
+func selfUpdate() error {
 	u := &updater.Updater{
 		Provider: &provider.Github{
 			RepositoryURL: "github.com/mouuff/SmartCut",
@@ -40,19 +66,39 @@ func selfUpdate() {
 		Version:        SmartCutVersion,
 	}
 
-	if _, err := u.Update(); err != nil {
-		log.Println(err)
+	updateStatus, err := u.Update()
+
+	if err != nil {
+		return err
 	}
 
-	if err := u.CleanUp(); err != nil {
-		log.Println(err)
+	if updateStatus == updater.Updated {
+		if err := verifyInstallation(u); err != nil {
+			return u.Rollback()
+		}
 	}
+
+	if updateStatus == updater.UpToDate {
+		if err := u.CleanUp(); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+type SmartCutCmd struct {
+	flagSet *flag.FlagSet
+
+	config      string
+	versionFlag bool
 }
 
 // Init initializes the command
 func (cmd *SmartCutCmd) Init(args []string) error {
 	cmd.flagSet = flag.NewFlagSet("smartcut", flag.ExitOnError)
 	cmd.flagSet.StringVar(&cmd.config, "config", "", "configuration file override")
+	cmd.flagSet.BoolVar(&cmd.versionFlag, "version", false, "prints the version and exit")
 	return cmd.flagSet.Parse(args)
 }
 
@@ -98,6 +144,11 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if cmd.versionFlag {
+		fmt.Println(SmartCutVersion)
+		return
+	}
+
 	a := app.NewWithID("com.mouuff.smartcut")
 	w := a.NewWindow("SmartCut - " + SmartCutVersion)
 	w.Resize(fyne.NewSize(800, 400))
@@ -108,5 +159,9 @@ func main() {
 	}
 
 	w.ShowAndRun()
-	selfUpdate()
+
+	err = selfUpdate()
+	if err != nil {
+		log.Println(err)
+	}
 }
