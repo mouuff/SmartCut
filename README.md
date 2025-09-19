@@ -24,7 +24,13 @@ I created this project because I frequently reuse the same prompts throughout my
 2. Download and extract the latest zip.  
 3. Run the SmartCut binary - it works out of the box.
 
-## Example usage
+## Example
+
+Example configuration:
+
+![Demo config](images/config_1.png)
+
+Example usage:
 
 ![Demo](images/demo.png)
 
