@@ -11,7 +11,7 @@ import (
 	"github.com/mouuff/go-rocket-update/pkg/updater"
 )
 
-const SmartCutVersion string = "v1.0.2"
+const SmartCutVersion string = "v1.0.3"
 
 type SmartCutUpdater struct {
 	updater *updater.Updater
