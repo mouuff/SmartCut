@@ -43,12 +43,12 @@ func GetDefaultConfiguration() *types.SmartCutConfig {
 		PromptConfigs: []types.PromptConfig{
 			{
 				Title:          "Rewrite formally",
-				PromptTemplate: "Rewrite this formally: '{{input}}'",
+				TemplatePrompt: "Rewrite this formally: '{{input}}'",
 				PropertyName:   "formal_text",
 			},
 			{
 				Title:          "Rewrite for clarity",
-				PromptTemplate: "Rewrite this: '{{input}}'",
+				TemplatePrompt: "Rewrite this: '{{input}}'",
 				PropertyName:   "rewritten_text",
 			},
 		},

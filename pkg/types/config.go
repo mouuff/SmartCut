@@ -5,7 +5,8 @@ import "strings"
 // PromptConfig represents a single prompt configuration
 type PromptConfig struct {
 	Title          string
-	PromptTemplate string
+	SystemPrompt   string
+	TemplatePrompt string
 	PropertyName   string
 }
 
@@ -20,5 +21,5 @@ type SmartCutConfig struct {
 }
 
 func (c *PromptConfig) GetPrompt(input string) string {
-	return strings.ReplaceAll(c.PromptTemplate, "{{input}}", input)
+	return strings.ReplaceAll(c.TemplatePrompt, "{{input}}", input)
 }
