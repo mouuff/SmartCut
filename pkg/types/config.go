@@ -4,6 +4,7 @@ import "strings"
 
 // PromptConfig represents a single prompt configuration
 type PromptConfig struct {
+	Model          string
 	Title          string
 	SystemPrompt   string
 	TemplatePrompt string
@@ -14,7 +15,6 @@ type PromptConfig struct {
 type SmartCutConfig struct {
 	ConfigPath     string `json:"-"`
 	HostUrl        string
-	Model          string
 	MinRowsVisible int
 	Debug          bool
 	PromptConfigs  []PromptConfig
