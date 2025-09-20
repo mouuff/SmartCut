@@ -23,8 +23,9 @@ import (
 type SmartCutCmd struct {
 	flagSet *flag.FlagSet
 
-	config      string
-	versionFlag bool
+	config       string
+	versionFlag  bool
+	noUpdateFlag bool
 }
 
 // Init initializes the command
@@ -32,6 +33,7 @@ func (cmd *SmartCutCmd) Init(args []string) error {
 	cmd.flagSet = flag.NewFlagSet("smartcut", flag.ExitOnError)
 	cmd.flagSet.StringVar(&cmd.config, "config", "", "configuration file override")
 	cmd.flagSet.BoolVar(&cmd.versionFlag, "version", false, "prints the version and exit")
+	cmd.flagSet.BoolVar(&cmd.noUpdateFlag, "no-update", false, "disable automatic updates")
 	return cmd.flagSet.Parse(args)
 }
 
@@ -93,9 +95,11 @@ func main() {
 
 	w.ShowAndRun()
 
-	u := internal.GetSmartCutUpdater()
-	err = u.SelfUpdate()
-	if err != nil {
-		log.Println(err)
+	if !cmd.noUpdateFlag {
+		u := internal.GetSmartCutUpdater()
+		err = u.SelfUpdate()
+		if err != nil {
+			log.Println(err)
+		}
 	}
 }
