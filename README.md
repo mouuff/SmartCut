@@ -5,11 +5,11 @@ This application designed to facilitate the invocation of pre-defined prompt seq
 I created this project because I frequently reuse the same prompts throughout my day-for rewriting messages, adjusting email tone, or rephrasing content. The goal is to cut down on repetitive steps and make the process faster and easier.
 
 ## Features
-- **Custom Prompts** – Create and manage your own prompt workflows.  
-- **Flexible Model Choice** – Connect to the AI model of your preference.  
-- **Quick Shortcuts** – Instantly run SmartCut on your clipboard with `Alt + Shift + G` (G stands for *Generate*).  
-- **Always Up to Date** – SmartCut updates automatically.  
-- **Local or Remote** – Works with both locally hosted and remote LLMs.  
+- **Custom Prompts** – Create and manage your own prompt workflows.
+- **Flexible Model Choice** – Connect to the AI model of your preference.
+- **Quick Shortcuts** – Instantly run SmartCut on your clipboard with `Alt + Shift + G` (G stands for *Generate*).
+- **Always Up to Date** – SmartCut updates automatically and securely.
+- **Local or Remote** – Works with both locally hosted and remote LLMs.
 
 ## Installation
 
