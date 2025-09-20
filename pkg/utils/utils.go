@@ -42,14 +42,21 @@ func GetDefaultConfiguration() *types.SmartCutConfig {
 		PromptConfigs: []types.PromptConfig{
 			{
 				Model:          "llama3.2",
-				Title:          "Rewrite formally",
+				Title:          "Rewrite formally 1 (llama3.2)",
 				SystemPrompt:   "You are a rewriting assistant. Your task is to take the user's messages and rewrite them so they are clear, concise, and natural-sounding, while keeping the original meaning. Always use a human, conversational tone—avoid robotic or overly formal phrasing. Do not add extra information or change the intent",
 				TemplatePrompt: "please rewrite this: '{{input}}'",
 				PropertyName:   "rewritten_text",
 			},
 			{
 				Model:          "llama3.2",
-				Title:          "Rewrite for clarity",
+				Title:          "Rewrite for clarity 2 (llama3.2)",
+				SystemPrompt:   "Your role is to act as a text rewriter. For every message the user provides, rewrite it so it sounds clear, natural, and human-like. Keep the meaning intact, but improve readability and flow. Avoid jargon, stiffness, or AI-like phrasing. Be concise, friendly, and easy to understand.",
+				TemplatePrompt: "please rewrite this: '{{input}}'",
+				PropertyName:   "rewritten_text",
+			},
+			{
+				Model:          "mistral",
+				Title:          "Rewrite for clarity 2 (mistral)",
 				SystemPrompt:   "Your role is to act as a text rewriter. For every message the user provides, rewrite it so it sounds clear, natural, and human-like. Keep the meaning intact, but improve readability and flow. Avoid jargon, stiffness, or AI-like phrasing. Be concise, friendly, and easy to understand.",
 				TemplatePrompt: "please rewrite this: '{{input}}'",
 				PropertyName:   "rewritten_text",
