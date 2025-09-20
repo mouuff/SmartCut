@@ -1,14 +1,16 @@
 package types
 
-import "strings"
+import (
+	"strings"
+)
 
 // PromptConfig represents a single prompt configuration
 type PromptConfig struct {
-	Model          string
-	Title          string
-	SystemPrompt   string
-	TemplatePrompt string
-	PropertyName   string
+	Model        string
+	Title        string
+	SystemPrompt string
+	Prompt       string
+	PropertyName string
 }
 
 // SmartCutConfig represents the overall configuration for SmartCut
@@ -21,5 +23,5 @@ type SmartCutConfig struct {
 }
 
 func (c *PromptConfig) GetPrompt(input string) string {
-	return strings.ReplaceAll(c.TemplatePrompt, "{{input}}", input)
+	return strings.ReplaceAll(c.Prompt, "{{input}}", input)
 }
