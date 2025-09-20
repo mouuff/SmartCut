@@ -32,24 +32,27 @@ func GetConfigurationFilePath() (string, error) {
 		return "", err
 	}
 
-	return filepath.Join(homeDir, ".smartcut.json"), nil
+	return filepath.Join(homeDir, ".smartcut.v2.json"), nil
 }
 
 func GetDefaultConfiguration() *types.SmartCutConfig {
 	return &types.SmartCutConfig{
 		HostUrl:        "default",
-		Model:          "llama3.2",
 		MinRowsVisible: 7,
 		PromptConfigs: []types.PromptConfig{
 			{
-				Title:          "Rewrite formally",
-				PromptTemplate: "Rewrite this formally: '{{input}}'",
-				PropertyName:   "formal_text",
+				Model:        "llama3.2",
+				Title:        "Rewrite for clarity (llama3.2)",
+				SystemPrompt: "You are a rewriting assistant. Your task is to take the user's messages and rewrite them so they are clear, concise, and natural-sounding, while keeping the original meaning. Always use a human, conversational tone—avoid robotic or overly formal phrasing. Do not add extra information or change the intent",
+				Prompt:       "please rewrite this: '{{input}}'",
+				PropertyName: "rewritten_text",
 			},
 			{
-				Title:          "Rewrite for clarity",
-				PromptTemplate: "Rewrite this: '{{input}}'",
-				PropertyName:   "rewritten_text",
+				Model:        "mistral",
+				Title:        "Rewrite for clarity (mistral)",
+				SystemPrompt: "Your role is to act as a text rewriter. For every message the user provides, rewrite it so it sounds clear, natural, and human-like. Keep the meaning intact, but improve readability and flow. Avoid jargon, stiffness, or AI-like phrasing. Be concise, friendly, and easy to understand.",
+				Prompt:       "please rewrite this: '{{input}}'",
+				PropertyName: "rewritten_text",
 			},
 		},
 	}

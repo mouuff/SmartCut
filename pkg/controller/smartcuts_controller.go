@@ -49,13 +49,13 @@ func (o *SmartCutController) GenerateForInput(input types.InputText) {
 
 	// For each prompt config, generate the result
 	for index, promptConfig := range o.config.PromptConfigs {
-		prompt := promptConfig.GetPrompt(input.Text)
-		go o.generateItemContent(index, promptConfig.PropertyName, prompt)
+		r := promptConfig.GetPromptRequest(input.Text)
+		go o.generateItemContent(index, r)
 	}
 }
 
-func (o *SmartCutController) generateItemContent(index int, propertyName, prompt string) {
-	result, err := o.brain.GenerateString(o.ctx, propertyName, prompt)
+func (o *SmartCutController) generateItemContent(index int, r *types.PromptRequest) {
+	result, err := o.brain.GenerateString(o.ctx, r)
 
 	if err != nil {
 		result = "Error while generating: " + err.Error()

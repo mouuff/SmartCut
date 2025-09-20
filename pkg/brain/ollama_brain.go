@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/mouuff/SmartCut/pkg/types"
 	"github.com/ollama/ollama/api"
 )
 
@@ -21,7 +22,6 @@ type Property struct {
 }
 
 type OllamaBrain struct {
-	Model  string
 	Client *api.Client
 }
 
@@ -39,7 +39,7 @@ func getClient(hosturl string) (*api.Client, error) {
 	}
 }
 
-func NewOllamaBrain(hosturl, model string) (*OllamaBrain, error) {
+func NewOllamaBrain(hosturl string) (*OllamaBrain, error) {
 	client, err := getClient(hosturl)
 
 	if err != nil {
@@ -47,20 +47,19 @@ func NewOllamaBrain(hosturl, model string) (*OllamaBrain, error) {
 	}
 
 	return &OllamaBrain{
-		Model:  model,
 		Client: client,
 	}, nil
 }
 
-func (c *OllamaBrain) GenerateString(ctx context.Context, propertyName, prompt string) (string, error) {
+func (c *OllamaBrain) GenerateString(ctx context.Context, r *types.PromptRequest) (string, error) {
 	formatSchema := Schema{
 		Type: "object",
 		Properties: map[string]Property{
-			propertyName: {
+			r.PropertyName: {
 				Type: "string",
 			},
 		},
-		Required: []string{propertyName},
+		Required: []string{r.PropertyName},
 	}
 
 	var result map[string]string
@@ -73,24 +72,25 @@ func (c *OllamaBrain) GenerateString(ctx context.Context, propertyName, prompt s
 		return nil
 	}
 
-	err := c.generate(ctx, prompt, formatSchema, respFunc)
+	err := c.generate(ctx, r, formatSchema, respFunc)
 
 	if err != nil {
 		return "", fmt.Errorf("failed to generate: %v", err)
 	}
 
-	return result[propertyName], nil
+	return result[r.PropertyName], nil
 }
 
-func (c *OllamaBrain) generate(ctx context.Context, prompt string, formatSchema Schema, fn api.GenerateResponseFunc) error {
+func (c *OllamaBrain) generate(ctx context.Context, r *types.PromptRequest, formatSchema Schema, fn api.GenerateResponseFunc) error {
 	format, err := json.Marshal(formatSchema)
 	if err != nil {
 		return fmt.Errorf("failed to marshal the format schema: %v", err)
 	}
 
 	req := &api.GenerateRequest{
-		Model:  c.Model,
-		Prompt: prompt,
+		Model:  r.Model,
+		Prompt: r.Prompt,
+		System: r.SystemPrompt,
 		Format: format,
 
 		// set streaming to false
