@@ -4,7 +4,7 @@ go 1.25.1
 
 require (
 	fyne.io/fyne/v2 v2.6.3
-	github.com/mouuff/go-rocket-update v1.5.5
+	github.com/mouuff/go-rocket-update v1.5.6
 	github.com/ollama/ollama v0.12.0
 	golang.design/x/clipboard v0.7.1
 )
