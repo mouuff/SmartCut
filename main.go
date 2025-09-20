@@ -44,7 +44,7 @@ func (cmd *SmartCutCmd) Run(a fyne.App, w fyne.Window) error {
 		return err
 	}
 
-	b, err := brain.NewOllamaBrain(config.HostUrl, config.Model)
+	b, err := brain.NewOllamaBrain(config.HostUrl)
 	if err != nil {
 		return err
 	}
