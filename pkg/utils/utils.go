@@ -32,7 +32,7 @@ func GetConfigurationFilePath() (string, error) {
 		return "", err
 	}
 
-	return filepath.Join(homeDir, ".smartcut.json"), nil
+	return filepath.Join(homeDir, ".smartcut.v2.json"), nil
 }
 
 func GetDefaultConfiguration() *types.SmartCutConfig {
