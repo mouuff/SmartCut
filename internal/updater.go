@@ -11,7 +11,7 @@ import (
 	"github.com/mouuff/go-rocket-update/pkg/updater"
 )
 
-const SmartCutVersion string = "v1.0.3"
+const SmartCutVersion string = "v1.0.4"
 
 const PubStr string = `-----BEGIN RSA PUBLIC KEY-----
 MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAyVY0SJrSdohlXCp8kXhL
