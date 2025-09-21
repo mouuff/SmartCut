@@ -63,16 +63,28 @@ func (sc *SmartCutView) refreshListResults() {
 		// Let content expand horizontally
 		contentContainer := container.NewStack(content)
 
-		button := widget.NewButton("Copy", func(c string) func() {
+		// Copy button
+		copyBtn := widget.NewButton("Copy", func(c string) func() {
 			return func() {
 				clipboard.Write(clipboard.FmtText, []byte(c))
 			}
 		}(item.Content))
 
-		// Row = title on top, content + button side by side
+		// New Update button (example action)
+		updateBtn := widget.NewButton("Update", func(c string) func() {
+			return func() {
+				// Example: just append text for now
+				content.SetText(c + " (updated)")
+			}
+		}(item.Content))
+
+		// Stack buttons vertically
+		buttons := container.NewVBox(copyBtn, updateBtn)
+
+		// Row = title on top, content + buttons side by side
 		row := container.NewVBox(
 			title,
-			container.NewBorder(nil, nil, nil, button, contentContainer),
+			container.NewBorder(nil, nil, nil, buttons, contentContainer),
 		)
 
 		sc.listContainer.Add(row)
