@@ -6,6 +6,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 	"github.com/mouuff/SmartCut/pkg/types"
 	"github.com/mouuff/SmartCut/pkg/utils"
@@ -43,7 +44,6 @@ func (sc *SmartCutView) RequestFocus() {
 		sc.window.RequestFocus()
 	})
 }
-
 func (sc *SmartCutView) refreshListResults() {
 	sc.listContainer.Objects = nil
 	for _, item := range sc.model.ResultItems() {
@@ -55,12 +55,10 @@ func (sc *SmartCutView) refreshListResults() {
 		content.MultiLine = true
 		content.Wrapping = fyne.TextWrapWord
 		content.OnChanged = func(_ string) {
-			// Reset text if user tries to type
 			content.SetText(item.Content)
 		}
 		content.SetMinRowsVisible(sc.model.Config().MinRowsVisible)
 
-		// Let content expand horizontally
 		contentContainer := container.NewStack(content)
 
 		// Copy button
@@ -70,18 +68,20 @@ func (sc *SmartCutView) refreshListResults() {
 			}
 		}(item.Content))
 
-		// New Update button (example action)
+		// Update button
 		updateBtn := widget.NewButton("Update", func(c string) func() {
 			return func() {
-				// Example: just append text for now
 				content.SetText(c + " (updated)")
 			}
 		}(item.Content))
 
-		// Stack buttons vertically
-		buttons := container.NewVBox(copyBtn, updateBtn)
+		// Stack buttons in a grid (1 column, 2 rows) => fill space equally
+		buttons := container.New(
+			layout.NewGridLayout(1),
+			copyBtn,
+			updateBtn,
+		)
 
-		// Row = title on top, content + buttons side by side
 		row := container.NewVBox(
 			title,
 			container.NewBorder(nil, nil, nil, buttons, contentContainer),
