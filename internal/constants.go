@@ -1,6 +1,6 @@
 package internal
 
-const SmartCutVersion string = "v2.0.0"
+const SmartCutVersion string = "v2.0.2"
 
 const PubStr string = `-----BEGIN RSA PUBLIC KEY-----
 MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAyVY0SJrSdohlXCp8kXhL
