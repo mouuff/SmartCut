@@ -1,3 +1,5 @@
+# Use msys2 or Git Bash to run this script on Windows
+
 # go build -ldflags -H=windowsgui cmd/smartcut/main.go
 
 private_key="../keys/id_rsa_smartcut"
